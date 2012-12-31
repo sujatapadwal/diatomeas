@@ -65,7 +65,7 @@
                   <div class="control-group">
                     <label class="control-label" style="width: 100px;">Privilegios </label>
                     <div class="controls" style="margin-left: 120px;">
-                      <div style="height: 300px; overflow-y: auto; border:1px #ddd solid;">
+                      <div id="list_privilegios" style="height: 300px; overflow-y: auto; border:1px #ddd solid;">
                         <?php 
                           if($this->empleados_model->tienePrivilegioDe('', 'privilegios/index/')){
                             echo $this->empleados_model->getFrmPrivilegios(0, true, (isset($data['privilegios'])? $data['privilegios']: array()));
