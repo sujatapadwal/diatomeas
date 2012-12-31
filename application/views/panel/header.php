@@ -43,7 +43,7 @@
 				<a class="brand" href="<?php echo base_url('panel/home/'); ?>"> 
 					<img alt="logo" src="<?php echo base_url('application/images/logo.png'); ?>" height="54">
 					<span>
-						Panel
+						<?php echo $seo['titulo'];?>
 					</span>
 				</a>
 				

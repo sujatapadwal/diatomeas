@@ -995,6 +995,13 @@ select:focus:required:invalid:focus {
   border-top: 1px solid #e5e5e5;
   *zoom: 1;
 }
+.form-actions.form-filters{
+  padding: 5px 10px 8px 10px;
+  margin-top: 0px;
+  margin-bottom: 5px;
+  border-top: none;
+  border-bottom: 1px solid #e5e5e5;
+}
 .form-actions:before,
 .form-actions:after {
   display: table;
@@ -1268,6 +1275,11 @@ table {
   width: 100%;
   margin-bottom: 18px;
 }
+.table caption{
+  font-size: 18px;
+  font-weight: bold;
+  color: #666;
+}
 .table th,
 .table td {
   padding: 8px;
@@ -1281,6 +1293,7 @@ table {
 }
 .table thead th {
   vertical-align: bottom;
+  background-color: #ECECEC;
 }
 .table caption + thead tr:first-child th,
 .table caption + thead tr:first-child td,

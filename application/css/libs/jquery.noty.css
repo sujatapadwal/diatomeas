@@ -293,7 +293,8 @@
   
   /* noty_alert */
 	.noty_bar.noty_theme_default.noty_alert {
-		background-color: #fff;
+		background-color: #FCF8E3;
+		color: #E49101;
 		border-color: #ccc;
 	}
 	.noty_bar.noty_theme_default.noty_alert.noty_layout_topLeft .noty_message .noty_buttons,

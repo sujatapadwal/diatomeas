@@ -57,7 +57,8 @@ class Usuarios extends MY_Controller {
 		));
 		$this->carabiner->js(array(
 			array('libs/jquery.uniform.min.js'),
-			array('libs/jquery.treeview.js')
+			array('libs/jquery.treeview.js'),
+			array('panel/usuarios/add_mod_frm.js')
 		));
 		
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
@@ -102,7 +103,8 @@ class Usuarios extends MY_Controller {
 			));
 			$this->carabiner->js(array(
 				array('libs/jquery.uniform.min.js'),
-				array('libs/jquery.treeview.js')
+				array('libs/jquery.treeview.js'),
+				array('panel/usuarios/add_mod_frm.js')
 			));
 			
 			$this->load->model('usuarios_model');

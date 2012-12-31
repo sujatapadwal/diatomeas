@@ -130,7 +130,8 @@ class privilegios_model extends CI_Model{
 				'params'    => '', 
 				'btn_type'  => '',
 				'icon_type' => 'icon-white',
-				'attrs'     => array()
+				'attrs'     => array(),
+				'text_link' => 'hidden-tablet'
 				);
 			$conf = array_merge($conf, $config);
 
@@ -139,8 +140,8 @@ class privilegios_model extends CI_Model{
 				$attrs .= $key.'="'.$value.'" ';
 			}
 
-			$txt = '<a class="btn '.$conf['btn_type'].'" href="'.base_url('panel/'.$priv->url_accion.'?'.$conf['params']).'" '.$attrs.'>
-							<i class="icon-'.$priv->url_icono.' '.$conf['icon_type'].'"></i> '.$priv->nombre.'</a>';
+			$txt = '<a class="btn '.$conf['btn_type'].'" href="'.base_url('panel/'.$priv->url_accion.'?'.$conf['params']).'" '.$attrs.' title="'.$priv->nombre.'">
+							<i class="icon-'.$priv->url_icono.' '.$conf['icon_type'].'"></i> <span class="'.$conf['text_link'].'">'.$priv->nombre.'</span></a>';
 		}
 		return $txt;
 	}
@@ -227,19 +228,19 @@ class privilegios_model extends CI_Model{
 			
 			if($bande==true && $firs==true && $showp==true){
 				$txt .= '<li><label style="font-size:11px;">
-				<input type="'.$tipo_obj.'" name="'.$set_nombre.'" id="'.$set_nombre.'0" value="0" '.$set_val.($data->id_padre==0?  ' checked': '').'> Padre</label>
+				<input type="'.$tipo_obj.'" name="'.$set_nombre.'" data-uniform="false" value="0" '.$set_val.($data->id_padre==0?  ' checked': '').'> Padre</label>
 				</li>';
 				$bande = false;
 			}
 			
 			if($data1->num > 0){
 				$txt .= '<li><label style="font-size:11px;">
-					<input type="'.$tipo_obj.'" name="'.$set_nombre.'" id="'.$set_nombre.$data->id_privilegio.'" value="'.$data->id_privilegio.'" '.$set_val.'> '.$data->nombre.'</label>
+					<input type="'.$tipo_obj.'" name="'.$set_nombre.'" data-uniform="false" value="'.$data->id_privilegio.'" '.$set_val.'> '.$data->nombre.'</label>
 					'.$this->getFrmPrivilegios($data->id_privilegio, false, $tipo).'
 				</li>';
 			}else{
 				$txt .= '<li><label style="font-size:11px;">
-					<input type="'.$tipo_obj.'" name="'.$set_nombre.'" id="'.$set_nombre.$data->id_privilegio.'" value="'.$data->id_privilegio.'" '.$set_val.'> '.$data->nombre.'</label>
+					<input type="'.$tipo_obj.'" name="'.$set_nombre.'" data-uniform="false" value="'.$data->id_privilegio.'" '.$set_val.'> '.$data->nombre.'</label>
 				</li>';
 			}
 			$res1->free_result();
