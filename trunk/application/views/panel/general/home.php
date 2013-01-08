@@ -13,37 +13,25 @@
 			</div>
 
 			<div class="sortable row-fluid">
-				<a data-rel="tooltip" title="122" class="well span3 top-block" href="#">
-					<span class="icon32 icon-red icon-user"></span>
-					<div>Total de Usuarios</div>
-					<div>22</div>
-					<span class="notification">2</span>
+				<a data-rel="tooltip" title="<?php echo $venta_semana->num; ?>" class="well span3 top-block">
+					<span class="icon32 icon-red icon-shopping-cart"></span>
+					<div>Ventas semanal</div>
+					<div><?php echo String::formatoNumero($venta_semana->total); ?></div>
+					<span class="notification yellow"><?php echo $venta_semana->num; ?></span>
 				</a>
 
-				<a data-rel="tooltip" title="32" class="well span3 top-block" href="#">
-					<span class="icon32 icon-color icon-star-on"></span>
-					<div>Usuarios tic</div>
-					<div>12</div>
-					<span class="notification green">1</span>
+				<a data-rel="tooltip" title="<?php echo $venta_mes->num; ?>" class="well span3 top-block">
+					<span class="icon32 icon-color icon-shopping-cart"></span>
+					<div>Ventas del mes</div>
+					<div><?php echo String::formatoNumero($venta_mes->total); ?></div>
+					<span class="notification yellow"><?php echo $venta_mes->num; ?></span>
 				</a>
 
-				<a data-rel="tooltip" title="123" class="well span3 top-block" href="<?php echo base_url('panel/ventas'); ?>">
-					<span class="icon32 icon-color icon-cart"></span>
-					<div>Ventas</div>
-					<div>2312</div>
-					<span class="notification yellow">12312</span>
-				</a>
 				
-				<a data-rel="tooltip" title="12 new messages." class="well span3 top-block" href="<?php echo base_url('panel/mensajes'); ?>">
-					<span class="icon32 icon-color icon-envelope-closed"></span>
-					<div>Mensajes</div>
-					<div>12</div>
-					<span class="notification red">22</span>
-				</a>
 			</div>
 					
 			<div class="row-fluid sortable">
-				<div class="box span6">
+				<div class="box span12">
 					<div class="box-header well">
 						<h2><i class="icon-shopping-cart"></i> Ventas por confirmar</h2>
 						<div class="box-icon">

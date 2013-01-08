@@ -453,6 +453,28 @@ class String{
 		list($anio,$mes,$dia)=explode("-",$fecha);
 		return (((mktime ( 0, 0, 0, $mes, $dia, $anio) - mktime ( 0, 0, 0, 7, 17, 2006))/(60*60*24))+700000) % 7;
 	}
+
+	public static function ultimoDia($anho,$mes){ 
+	   if (((fmod($anho,4)==0) and (fmod($anho,100)!=0)) or (fmod($anho,400)==0)) { 
+	       $dias_febrero = 29; 
+	   } else { 
+	       $dias_febrero = 28; 
+	   } 
+	   switch($mes) { 
+	       case 01: return 31; break; 
+	       case 02: return $dias_febrero; break; 
+	       case 03: return 31; break; 
+	       case 04: return 30; break; 
+	       case 05: return 31; break; 
+	       case 06: return 30; break; 
+	       case 07: return 31; break; 
+	       case 08: return 31; break; 
+	       case 09: return 30; break; 
+	       case 10: return 31; break; 
+	       case 11: return 30; break; 
+	       case 12: return 31; break; 
+	   } 
+	}
 	
 }
 

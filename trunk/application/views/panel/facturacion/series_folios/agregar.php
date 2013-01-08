@@ -18,9 +18,17 @@
   <form class="form-horizontal" action="<?php echo base_url('panel/facturacion/agregar_serie_folio');?>" method="POST" enctype="multipart/form-data">
 
       <div class="control-group">
+        <label for="fempresa" class="control-label">Empresa</label>
+        <div class="controls">
+          <input type="text" name="fempresa" class="span6" id="fempresa" value="<?php echo set_value('fempresa'); ?>" autofocus>
+          <input type="hidden" name="fid_empresa" id="fid_empresa" value="<?php echo set_value('fid_empresa'); ?>">
+        </div>
+      </div>
+
+      <div class="control-group">
         <label for="fserie" class="control-label">Serie</label>
         <div class="controls">
-          <input type="text" name="fserie" id="fserie" value="<?php echo set_value('fserie') ?>" size="30" autofocus maxlength="30" placeholder="Serie">
+          <input type="text" name="fserie" id="fserie" value="<?php echo set_value('fserie') ?>" size="30" maxlength="30" placeholder="Serie">
         </div>
       </div>
 

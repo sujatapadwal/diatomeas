@@ -27,6 +27,17 @@ class home extends MY_Controller {
 			'titulo' => 'Panel de Administración'
 		);
 
+		$calcWeek = date('W', strtotime(''))-1;
+		$params['venta_semana'] = $this->db->query("SELECT Count(*) AS num, IFNULL(Sum(total), 0) AS total 
+			FROM facturas WHERE status <> 'ca' 
+				AND fecha BETWEEN '".date('Y-m-d', strtotime('Monday ' . ($calcWeek-1) . ' weeks'))."' 
+				AND '".date('Y-m-d', strtotime('Sunday ' . $calcWeek . ' weeks'))."'")->row();
+
+		$params['venta_mes'] = $this->db->query("SELECT Count(*) AS num, IFNULL(Sum(total), 0) AS total 
+			FROM facturas WHERE status <> 'ca' 
+				AND fecha BETWEEN '".date('Y-m')."-01' 
+				AND '".date('Y-m').'-'.String::ultimoDia(date('Y'), date('m'))."'")->row();
+
 
 		$this->load->view('panel/header', $params);
 		$this->load->view('panel/general/menu', $params);
