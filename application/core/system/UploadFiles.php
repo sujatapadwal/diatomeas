@@ -5,18 +5,18 @@ class UploadFiles{
 	/**
 	 * Guarda la imagen de un empleado
 	 */
-	public static function uploadImgEmpleado(){
+	public static function uploadEmpresaLogo(){
 		$ci =& get_instance();
-		if(isset($_FILES['durl_img'])){
-			if($_FILES['durl_img']['name']!=''){
-				$config['upload_path'] = APPPATH.'images/empleados/';
+		if(isset($_FILES['dlogo'])){
+			if($_FILES['dlogo']['name']!=''){
+				$config['upload_path'] = APPPATH.'images/empresas/';
 				$config['allowed_types'] = 'jpg|jpeg|gif|png';
 				$config['max_size']	= '200';
 				$config['max_width'] = '1024';
 				$config['max_height'] = '768';
 				$config['encrypt_name'] = true;
 				$ci->load->library('upload', $config);
-				if(!$ci->upload->do_upload('durl_img')){
+				if(!$ci->upload->do_upload('dlogo')){
 					$data = array(false, $ci->upload->display_errors());
 				}else{
 					$data = array(true, $ci->upload->data());
@@ -25,8 +25,8 @@ class UploadFiles{
 					$config['source_image']	= $data[1]['full_path'];
 					$config['create_thumb'] = false;
 					$config['master_dim'] = 'auto';
-					$config['width']	 = 150;
-					$config['height']	= 150;
+					$config['width']	 = 200;
+					$config['height']	= 200;
 
 					$ci->load->library('image_lib', $config);
 					$ci->image_lib->resize();

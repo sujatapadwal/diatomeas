@@ -335,15 +335,16 @@ class facturacion_model extends privilegios_model{
 		if($params['result_page'] % $params['result_items_per_page'] == 0)
 			$params['result_page'] = ($params['result_page']/$params['result_items_per_page']);
 
+		$sql = '';
 // 		if($this->input->get('fserie')!='')
 // 			$this->db->where('serie',$this->input->get('fserie'));
 
-		$this->db->like('lower(serie)',mb_strtolower($this->input->get('fserie'), 'UTF-8'));
-		$this->db->order_by('serie');
-		$this->db->get('facturas_series_folios');
-		$sql	= $this->db->last_query();
-
-		$query = BDUtil::pagination($sql, $params, true);
+		$query = BDUtil::pagination("SELECT fsf.id_serie_folio, fsf.id_empresa, fsf.serie, fsf.no_aprobacion, fsf.folio_inicio, 
+					fsf.folio_fin, fsf.imagen, fsf.leyenda, fsf.leyenda1, fsf.leyenda2, fsf.ano_aprobacion, e.nombre_fiscal AS empresa 
+				FROM facturas_series_folios AS fsf 
+					INNER JOIN empresas AS e ON e.id_empresa = fsf.id_empresa
+				WHERE lower(serie) LIKE '".mb_strtolower($this->input->get('fserie'), 'UTF-8')."' ".$sql."
+				ORDER BY fsf.serie", $params, true);
 		$res = $this->db->query($query['query']);
 
 		$data = array(
@@ -366,7 +367,11 @@ class facturacion_model extends privilegios_model{
 	public function getInfoSerieFolio($id_serie_folio = ''){
 		$id_serie_folio = ($id_serie_folio != '') ? $id_serie_folio : $this->input->get('id');
 
-		$res = $this->db->select('*')->from('facturas_series_folios')->where('id_serie_folio',$id_serie_folio)->get()->result();
+		$res = $this->db->select('fsf.id_serie_folio, fsf.id_empresa, fsf.serie, fsf.no_aprobacion, fsf.folio_inicio, 
+				fsf.folio_fin, fsf.imagen, fsf.leyenda, fsf.leyenda1, fsf.leyenda2, fsf.ano_aprobacion, e.nombre_fiscal AS empresa')
+			->from('facturas_series_folios AS fsf')
+				->join('empresas AS e', 'e.id_empresa = fsf.id_empresa', 'inner')
+			->where('fsf.id_serie_folio', $id_serie_folio)->get()->result();
 		return $res;
 	}
 
@@ -386,13 +391,13 @@ class facturacion_model extends privilegios_model{
 
 		$id_serie_folio	= BDUtil::getId();
 		$data	= array(
-				'id_serie_folio' => $id_serie_folio,
-				'serie'	=> strtoupper($this->input->post('fserie')),
-				'no_aprobacion'	=> $this->input->post('fno_aprobacion'),
-				'folio_inicio'	=> $this->input->post('ffolio_inicio'),
-				'folio_fin'		=> $this->input->post('ffolio_fin'),
-				'ano_aprobacion'=> $this->input->post('fano_aprobacion'),
-				'imagen' => $path_img,
+				'id_empresa'     => $this->input->post('fid_empresa'),
+				'serie'          => strtoupper($this->input->post('fserie')),
+				'no_aprobacion'  => $this->input->post('fno_aprobacion'),
+				'folio_inicio'   => $this->input->post('ffolio_inicio'),
+				'folio_fin'      => $this->input->post('ffolio_fin'),
+				'ano_aprobacion' => $this->input->post('fano_aprobacion'),
+				'imagen'         => $path_img,
 		);
 
 		if($this->input->post('fleyenda')!='')
@@ -430,11 +435,12 @@ class facturacion_model extends privilegios_model{
 		}
 
 		$data	= array(
-				'serie'	=> strtoupper($this->input->post('fserie')),
-				'no_aprobacion'	=> $this->input->post('fno_aprobacion'),
-				'folio_inicio'	=> $this->input->post('ffolio_inicio'),
-				'folio_fin'		=> $this->input->post('ffolio_fin'),
-				'ano_aprobacion'=> $this->input->post('fano_aprobacion')
+				'id_empresa'     => $this->input->post('fid_empresa'),
+				'serie'          => strtoupper($this->input->post('fserie')),
+				'no_aprobacion'  => $this->input->post('fno_aprobacion'),
+				'folio_inicio'   => $this->input->post('ffolio_inicio'),
+				'folio_fin'      => $this->input->post('ffolio_fin'),
+				'ano_aprobacion' => $this->input->post('fano_aprobacion')
 		);
 
 		if($path_img!='')

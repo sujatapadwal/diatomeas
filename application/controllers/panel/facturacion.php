@@ -316,7 +316,6 @@ class facturacion extends MY_Controller {
     ));
 
     $params['info_empleado']  = $this->info_empleado['info'];
-    $params['opcmenu_active']   = 'Ventas'; //activa la opcion del menu
     $params['seo']  = array('titulo' => 'Agregar Series y Folios');
 
     $this->load->model('facturacion_model');
@@ -402,9 +401,13 @@ class facturacion extends MY_Controller {
     $this->load->library('form_validation');
 
     $rules = array(
-//            array('field' => 'fserie',
-//                'label' => 'Serie',
-//                  'rules' => 'max_lenght[30]|callback_isValidSerie'),
+            array('field' => 'fid_empresa',
+                'label' => 'Empresa',
+                'rules' => 'required|numeric'),
+            array('field' => 'fempresa',
+                'label' => 'Empresa',
+                'rules' => 'min_length[1]'),
+
             array('field' => 'fno_aprobacion',
                 'label' => 'No Aprobación',
                 'rules' => 'required|numeric'),
@@ -452,6 +455,38 @@ class facturacion extends MY_Controller {
 
     $this->form_validation->set_rules($rules);
   }
+
+  /**
+   * Form_validation: Valida si la Serie ya existe
+   */
+  public function isValidSerie($str, $tipo){
+    $str = ($str=='') ? '' : $str;
+
+    if($tipo=='add'){
+      if($this->facturacion_model->exist('facturas_series_folios', 
+          array('serie' => strtoupper($str), 'id_empresa' => $this->input->post('fid_empresa')) )){
+        $this->form_validation->set_message('isValidSerie', 'El campo %s ya existe');
+        return false;
+      }
+      return true;
+    }
+    else{
+      $row = $this->facturacion_model->exist('facturas_series_folios', 
+        array('serie' => strtoupper($str), 'id_empresa' => $this->input->post('fid_empresa')), true);
+      
+      if($row!=FALSE){
+        if($row->id_serie_folio == $_GET['id'])
+          return true;
+        else{
+          $this->form_validation->set_message('isValidSerie', 'El campo %s ya existe');
+          return false;
+        }
+      }return true;
+    }
+      
+  }
+
+
 
   /****************************************
    *           REPORTES                   *

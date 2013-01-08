@@ -45,6 +45,7 @@
             <table class="table table-striped table-bordered bootstrap-datatable">
               <thead>
                 <tr>
+                  <th>Empresa</th>
                   <th>Serie</th>
                   <th>No Aprobación</th>
                   <th>Folio Inicio</th>
@@ -55,6 +56,7 @@
               <tbody>
             <?php foreach($datos_s['series'] as $serie) {?>
                 <tr>
+                  <td><?php echo $serie->empresa; ?></td>
                   <td><?php echo $serie->serie; ?></td>
                   <td><?php echo $serie->no_aprobacion; ?></td>
                   <td><?php echo $serie->folio_inicio; ?></td>

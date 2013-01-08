@@ -8,4 +8,20 @@ $(document).ready(function(){
 		 // //yearRange: (fecha_hoy.getFullYear()-70)+':'+fecha_hoy.getFullYear(),
 		 numberOfMonths: 1 //muestra mas de un mes en el calendario, depende del numero
 	 });
+
+	$("#fempresa").autocomplete({
+      source: base_url+'panel/empresas/ajax_get_empresas',
+      minLength: 1,
+      selectFirst: true,
+      select: function( event, ui ) {
+        $("#fid_empresa").val(ui.item.id);
+        $("#fempresa").css("background-color", "#B0FFB0");
+      }
+  }).on("keydown", function(event){
+      if(event.which == 8 || event == 46){
+        $("#fempresa").val("").css("background-color", "#FFD9B3");
+        $("#fid_empresa").val("");
+      }
+  });
+
 });
