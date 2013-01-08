@@ -3,15 +3,24 @@
 
     <div class="row">
       <div class="span6">
+
+        <div class="control-group">
+          <label class="control-label" for="dempresa">Empresa</label>
+          <div class="controls">
+            <input type="text" name="dempresa" class="span9" id="dempresa" value="<?php echo set_value('dempresa'); ?>" size="73" autofocus>
+            <input type="hidden" name="did_empresa" id="did_empresa" value="<?php echo set_value('did_empresa'); ?>">
+          </div>
+        </div>
+
         <div class="control-group">
           <label class="control-label" for="dserie">Serie</label>
           <div class="controls">
             <select name="dserie" class="span9" id="dserie">
                <option value=""></option>
-               <?php foreach($series['series'] as $ser){ ?>
-                    <option value="<?php echo $ser->serie; ?>" <?php echo set_select('dserie', $ser->serie); ?>>
-                      <?php echo $ser->serie.($ser->leyenda!=''? '-'.$ser->leyenda: ''); ?></option>
-                <?php } ?>
+               <?php // foreach($series['series'] as $ser){ ?>
+                    <!-- <option value="<?php // echo $ser->serie; ?>" <?php // echo set_select('dserie', $ser->serie); ?>> -->
+                      <?php // echo $ser->serie.($ser->leyenda!=''? '-'.$ser->leyenda: ''); ?></option>
+                <?php // } ?>
             </select>
           </div>
         </div>
@@ -23,14 +32,6 @@
 
             <input type="hidden" name="dano_aprobacion" id="dano_aprobacion" value="<?php echo set_value('dano_aprobacion'); ?>">
             <input type="hidden" name="dimg_cbb" id="dimg_cbb" value="<?php echo set_value('dimg_cbb'); ?>">
-          </div>
-        </div>
-
-        <div class="control-group">
-          <label class="control-label" for="dempresa">Empresa</label>
-          <div class="controls">
-            <input type="text" name="dempresa" class="span9" id="dempresa" value="<?php echo set_value('dempresa'); ?>" size="73" autofocus>
-            <input type="hidden" name="did_empresa" id="did_empresa" value="<?php echo set_value('did_empresa'); ?>">
           </div>
         </div>
 

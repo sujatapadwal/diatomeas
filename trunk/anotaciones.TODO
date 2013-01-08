@@ -11,7 +11,7 @@ los datos que se cargan en el autocomplete no sera campo por campo, solo sera do
  -Listado de facturas, opciones de pagar, cancelar, imprimir
  -Listado de facturas, campos a mostrar, Fecha, Serie-Folio, Cliente, Forma de pago (credito|contado), Estado
  -Reporte de ventas por cliente, campos a mostrar, Fecha, Serie, Folio, Cliente, Forma de pago, Estado, Total. al final poner suma del total de facturas
-   - Filtros cliente (autocomplete), folio, rango de fechas, estado(pagadas, pendientes, canceladas)
+   - Filtros cliente (autocomplete), empresa(autocomplete), folio, rango de fechas, estado(pagadas, pendientes, canceladas)
  -Ventas por Producto
    - campos a mostrar: codigo, producto, cantidad, importe
    - filtro: rango de fechas, familia | de las facturas que no esten canceladas

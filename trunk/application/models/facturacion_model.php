@@ -12,11 +12,11 @@ class facturacion_model extends privilegios_model{
 	 * **********************************************
 	 * Obtiene el listado de facturas
 	 */
-	public function getFacturas(){
+	public function getFacturas($perpage = '30'){
 		$sql = '';
 		//paginacion
 		$params = array(
-				'result_items_per_page' => '30',
+				'result_items_per_page' => $perpage,
 				'result_page' 			=> (isset($_GET['pag'])? $_GET['pag']: 0)
 		);
 		if($params['result_page'] % $params['result_items_per_page'] == 0)
@@ -37,12 +37,15 @@ class facturacion_model extends privilegios_model{
 		if($this->input->get('fstatus') != '')
 			$sql .= " AND f.status = '".$this->input->get('fstatus')."'";
 		if($this->input->get('fid_cliente') != '')
-			$sql .= " AND c.id_sucursal = '".$this->input->get('fid_cliente')."'";
+			$sql .= " AND f.id_cliente = '".$this->input->get('fid_cliente')."'";
+    if($this->input->get('did_empresa') != '')
+      $sql .= " AND f.id_empresa = '".$this->input->get('did_empresa')."'";
 
 		$query = BDUtil::pagination("
-				SELECT f.id_factura, Date(f.fecha) AS fecha, f.serie, f.folio, c.nombre_fiscal, f.condicion_pago, f.status
+				SELECT f.id_factura, Date(f.fecha) AS fecha, f.serie, f.folio, c.nombre_fiscal, e.nombre_fiscal as empresa, f.condicion_pago, forma_pago,  f.status, f.total
 				FROM facturas AS f
-        INNER JOIN clientes as c ON c.id_cliente = f.id_cliente
+        INNER JOIN empresas AS e ON e.id_empresa = f.id_empresa
+        INNER JOIN clientes AS c ON c.id_cliente = f.id_cliente
 				WHERE 1 = 1".$sql."
 				ORDER BY (Date(f.fecha)) DESC
 				", $params, true);
@@ -147,6 +150,25 @@ class facturacion_model extends privilegios_model{
 		return array($res, $msg);
 	}
 
+  /**
+   * Obtiene el folio de acuerdo a la serie seleccionada
+   */
+  public function get_series_empresa($ide){
+    $query = $this->db->select('id_serie_folio, id_empresa, serie')->
+                      from('facturas_series_folios')->
+                      where("id_empresa = ".$ide."")->
+                      order_by('serie', 'ASC')->get();
+
+    if($query->num_rows() > 0)
+    {
+      $res = $query->result();
+      $msg = 'ok';
+    } else
+      $msg = 'La empresa seleccionada no cuenta con Series y Folios.';
+
+    return array($res, $msg);
+  }
+
 	/**
 	 * Agrega una factura a la bd
 	 */
@@ -158,6 +180,7 @@ class facturacion_model extends privilegios_model{
       // 'id_factura'       => $id_factura,
       'id_cliente'          => $this->input->post('did_cliente'),
       'id_usuario'          => $this->session->userdata('id_usuario'),
+      'id_empresa'          => $this->input->post('did_empresa'),
       'serie'               => $this->input->post('dserie'),
       'folio'               => $this->input->post('dfolio'),
       'no_aprobacion'       => $this->input->post('dno_aprobacion'),
@@ -195,6 +218,8 @@ class facturacion_model extends privilegios_model{
         $porc_reten = 0;
 
       $importe_iva = (floatval($_POST['prod_dpreciou'][$k]) * floatval($_POST['prod_diva_porcent'])) / 100;
+      $descuento   = (floatval($_POST['prod_importe'][$k]) * floatval($_POST['prod_ddescuento_porcent'][$k])) / 100;
+
       $data_productos[] = array(
                                 'id_factura'      => $id_factura,
                                 'id_producto'     => (empty($v)) ? NULL : $v ,
@@ -203,8 +228,8 @@ class facturacion_model extends privilegios_model{
                                 'cantidad'        => $_POST['prod_dcantidad'][$k],
                                 'precio_unitario' => floatval($_POST['prod_dpreciou'][$k]),
                                 'importe'         => floatval($_POST['prod_importe'][$k]),
-                                'importe_iva'     => $importe_iva,
-                                'total'           => floatval($_POST['prod_importe'][$k]) + $importe_iva,
+                                'importe_iva'     => floatval($_POST['prod_diva_total'][$k]),
+                                'total'           => (floatval($_POST['prod_importe'][$k]) - $descuento) + (floatval($_POST['prod_diva_total'][$k]) - floatval($_POST['prod_dreten_iva_total'][$k])),
                                 'descuento'       => $_POST['prod_ddescuento_porcent'][$k],
                                 'retencion'       => $porc_reten,
                               );
@@ -228,6 +253,33 @@ class facturacion_model extends privilegios_model{
   public function pagaFactura(){
     $this->db->update('facturas', array('status' => 'pa'), "id_factura = '".$_GET['id']."'");
     return array(true, '');
+  }
+
+  /**
+   * Obtiene el listado de clientes para usar ajax
+   */
+  public function ajax_get_empresas(){
+    $sql = '';
+    $res = $this->db->query("
+        SELECT id_empresa, nombre_fiscal
+        FROM empresas
+        WHERE status = 'ac' AND lower(nombre_fiscal) LIKE '%".mb_strtolower($this->input->get('term'), 'UTF-8')."%'
+        ORDER BY nombre_fiscal ASC
+        LIMIT 20");
+
+    $response = array();
+    if($res->num_rows() > 0){
+      foreach($res->result() as $itm){
+        $response[] = array(
+            'id' => $itm->id_empresa,
+            'label' => $itm->nombre_fiscal,
+            'value' => $itm->nombre_fiscal,
+            'item' => $itm,
+        );
+      }
+    }
+
+    return $response;
   }
 
 	/**
@@ -470,5 +522,154 @@ class facturacion_model extends privilegios_model{
 		return FALSE;
 	}
 
+  public function getRVP()
+  {
+    $sql = '';
+    //Filtros para buscar
+    if($this->input->get('ffecha1') != '' && $this->input->get('ffecha2') != '')
+      $sql = " AND Date(f.fecha) BETWEEN '".$this->input->get('ffecha1')."' AND '".$this->input->get('ffecha2')."'";
+    elseif($this->input->get('ffecha1') != '')
+      $sql = " AND Date(f.fecha) = '".$this->input->get('ffecha1')."'";
+    elseif($this->input->get('ffecha2') != '')
+      $sql = " AND Date(f.fecha) = '".$this->input->get('ffecha2')."'";
+
+    if ($this->input->get('dfamilia') != '')
+      $sql .= " AND p.id_familia = " . $this->input->get('dfamilia');
+
+    // var_dump($sql);exit;
+
+    $query = $this->db->query("SELECT fp.id_producto, SUM(fp.cantidad) AS total_cantidad, SUM(fp.importe) AS total_importe, p.codigo, p.nombre as producto
+                                FROM facturas_productos AS fp
+                                INNER JOIN facturas AS f ON f.id_factura = fp.id_factura
+                                INNER JOIN productos AS p ON p.id_producto = fp.id_producto
+                                WHERE f.status != 'ca' $sql
+                                GROUP BY fp.id_producto");
+
+    return $query->result();
+
+  }
+
+
+   /****************************************
+   *           REPORTES                   *
+   ****************************************/
+
+
+   public function rvc_pdf()
+   {
+      $data = $this->getFacturas('10000');
+
+      $this->load->library('mypdf');
+      // Creación del objeto de la clase heredada
+      $pdf = new MYpdf('P', 'mm', 'Letter');
+      $pdf->show_head = true;
+      $pdf->titulo2 = 'Reporte Ventas Cliente';
+
+      if (!empty($_GET['ffecha1']) && !empty($_GET['ffecha2']))
+        $pdf->titulo3 = "Del ".$_GET['ffecha1']." al ".$_GET['ffecha2']."";
+      elseif (!empty($_GET['ffecha1']))
+        $pdf->titulo3 = "Del ".$_GET['ffecha1'];
+      elseif (!empty($_GET['ffecha2']))
+        $pdf->titulo3 = "Del ".$_GET['ffecha2'];
+
+      $pdf->AliasNbPages();
+      // $links = array('', '', '', '');
+      $pdf->SetY(30);
+      $aligns = array('C', 'C', 'C', 'C','C', 'C', 'C', 'C', 'C');
+      $widths = array(20, 25, 13, 51, 30, 35, 30, 30, 18);
+      $header = array('Fecha', 'Serie', 'Folio', 'Cliente', 'Empresa', 'Forma de pago', 'Estado');
+      $total = 0;
+
+      foreach($data['fact'] as $key => $item)
+      {
+        $band_head = false;
+        if($pdf->GetY() >= $pdf->limiteY || $key==0) //salta de pagina si exede el max
+        {
+          $pdf->AddPage();
+
+          $pdf->SetFont('Arial','B',8);
+          $pdf->SetTextColor(255,255,255);
+          $pdf->SetFillColor(160,160,160);
+          $pdf->SetX(6);
+          $pdf->SetAligns($aligns);
+          $pdf->SetWidths($widths);
+          $pdf->Row($header, true);
+        }
+
+        $pdf->SetFont('Arial','',8);
+        $pdf->SetTextColor(0,0,0);
+
+        $estado = ($item->status === 'p') ? 'Pendiente' : (($item->status === 'pa') ? 'Pagada' : 'Cancelada');
+        $datos = array($item->fecha, $item->serie, $item->folio, $item->nombre_fiscal, $item->empresa, $item->forma_pago, $estado);
+        $total += floatval($item->total);
+
+        $pdf->SetX(6);
+        $pdf->SetAligns($aligns);
+        $pdf->SetWidths($widths);
+        $pdf->Row($datos, false);
+      }
+
+      $pdf->SetX(6);
+      $pdf->SetFont('Arial','B',8);
+      $pdf->SetTextColor(255,255,255);
+      $pdf->Row(array('Total:', String::formatoNumero($total)), true);
+
+      $pdf->Output('Reporte_Ventas_Cliente.pdf', 'I');
+  }
+
+  public function rvp_pdf()
+   {
+      $data = $this->getRVP();
+
+      $this->load->library('mypdf');
+      // Creación del objeto de la clase heredada
+      $pdf = new MYpdf('P', 'mm', 'Letter');
+      $pdf->show_head = true;
+      $pdf->titulo2 = 'Reporte Ventas Cliente';
+
+      if (!empty($_GET['ffecha1']) && !empty($_GET['ffecha2']))
+        $pdf->titulo3 = "Del ".$_GET['ffecha1']." al ".$_GET['ffecha2']."";
+      elseif (!empty($_GET['ffecha1']))
+        $pdf->titulo3 = "Del ".$_GET['ffecha1'];
+      elseif (!empty($_GET['ffecha2']))
+        $pdf->titulo3 = "Del ".$_GET['ffecha2'];
+
+      $pdf->AliasNbPages();
+      // $links = array('', '', '', '');
+      $pdf->SetY(30);
+      $aligns = array('C', 'C', 'C', 'C','C', 'C', 'C', 'C', 'C');
+      $widths = array(20, 120, 20, 44);
+      $header = array('Codigo', 'Producto', 'Cantidad', 'Importe');
+      $total = 0;
+
+      foreach($data as $key => $item)
+      {
+        $band_head = false;
+        if($pdf->GetY() >= $pdf->limiteY || $key==0) //salta de pagina si exede el max
+        {
+          $pdf->AddPage();
+
+          $pdf->SetFont('Arial','B',8);
+          $pdf->SetTextColor(255,255,255);
+          $pdf->SetFillColor(160,160,160);
+          $pdf->SetX(6);
+          $pdf->SetAligns($aligns);
+          $pdf->SetWidths($widths);
+          $pdf->Row($header, true);
+        }
+
+        $pdf->SetFont('Arial','',8);
+        $pdf->SetTextColor(0,0,0);
+
+        $datos = array($item->codigo, $item->producto, $item->total_cantidad, String::formatoNumero($item->total_importe));
+
+        $pdf->SetX(6);
+        $pdf->SetAligns($aligns);
+        $pdf->SetWidths($widths);
+        $pdf->Row($datos, false);
+      }
+
+      $pdf->Output('Reporte_Ventas_Productos.pdf', 'I');
+  }
 
 }
