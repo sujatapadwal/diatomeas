@@ -6,7 +6,8 @@ class facturacion extends MY_Controller {
    * Evita la validacion (enfocado cuando se usa ajax). Ver mas en privilegios_model
    * @var unknown_type
    */
-  private $excepcion_privilegio = array('facturacion/get_folio/', 'facturacion/rvc_pdf/');
+  private $excepcion_privilegio = array('facturacion/get_folio/', 'facturacion/get_series/',
+                                        'facturacion/ajax_get_empresas/', 'facturacion/rvc_pdf/', 'facturacion/rvp_pdf/');
 
 
   public function _remap($method){
@@ -123,6 +124,10 @@ class facturacion extends MY_Controller {
   private function configAddModFactura(){
     $this->load->library('form_validation');
     $rules = array(
+
+        array('field'   => 'did_empresa',
+            'label'   => 'Empresa',
+            'rules'   => 'required|max_length[25]'),
         array('field'   => 'did_cliente',
             'label'   => 'Cliente',
             'rules'   => 'required|max_length[25]'),
@@ -180,6 +185,9 @@ class facturacion extends MY_Controller {
         //     'label'   => 'Plazo de crédito',
         //     'rules'   => 'required|numeric'),
 
+        array('field'   => 'dempresa',
+            'label'   => 'Empresa',
+            'rules'   => ''),
         array('field'   => 'dcliente',
             'label'   => 'Cliente',
             'rules'   => ''),
@@ -397,6 +405,22 @@ class facturacion extends MY_Controller {
     }
   }
 
+  /**
+   * obtiene el folio siguiente de la serie seleccionada
+   */
+  public function get_series(){
+    if(isset($_GET['ide']))
+    {
+      $this->load->model('facturacion_model');
+      $res = $this->facturacion_model->get_series_empresa($_GET['ide']);
+
+      $param =  $this->showMsgs(2, $res[1]);
+      $param['data'] = $res[0];
+      echo json_encode($param);
+    }
+  }
+
+
   private function configAddSerieFolio($tipo='add'){
     $this->load->library('form_validation');
 
@@ -486,6 +510,14 @@ class facturacion extends MY_Controller {
       
   }
 
+  public function ajax_get_empresas()
+  {
+    $this->load->model('facturacion_model');
+    $res_mdl = $this->facturacion_model->ajax_get_empresas();
+
+    echo json_encode($res_mdl);
+  }
+
 
 
   /****************************************
@@ -498,17 +530,9 @@ class facturacion extends MY_Controller {
       array('panel/facturacion/admin.js'),
     ));
 
-    $this->load->library('pagination');
-    $this->load->model('facturacion_model');
-
     $params['info_empleado']  = $this->info_empleado['info'];
     $params['opcmenu_active'] = 'Facturacion'; //activa la opcion del menu
     $params['seo']        = array('titulo' => 'Reporte Ventas Cliente');
-
-    $params['datos_s'] = $this->facturacion_model->getFacturas();
-
-    if(isset($_GET['msg']{0}))
-      $params['frm_errors'] = $this->showMsgs($_GET['msg']);
 
     $this->load->view('panel/header',$params);
     $this->load->view('panel/general/menu',$params);
@@ -519,10 +543,36 @@ class facturacion extends MY_Controller {
 
   public function rvc_pdf()
   {
-    var_dump($_GET);
+    $this->load->model('facturacion_model');
+    $this->facturacion_model->rvc_pdf();
   }
 
+  public function rvp()
+  {
+    $this->carabiner->js(array(
+      array('panel/facturacion/admin.js'),
+    ));
 
+    $params['info_empleado']  = $this->info_empleado['info'];
+    $params['opcmenu_active'] = 'Facturacion'; //activa la opcion del menu
+    $params['seo']        = array('titulo' => 'Reporte Ventas Producto');
+
+    $query = $this->db->query("SELECT id_familia, nombre
+                               FROM productos_familias");
+
+    $params['familias'] = $query->result();
+
+    $this->load->view('panel/header',$params);
+    $this->load->view('panel/general/menu',$params);
+    $this->load->view('panel/facturacion/rvp',$params);
+    $this->load->view('panel/footer',$params);
+  }
+
+  public function rvp_pdf()
+  {
+    $this->load->model('facturacion_model');
+    $this->facturacion_model->rvp_pdf();
+  }
 
   /**
    * Muestra mensajes cuando se realiza alguna accion

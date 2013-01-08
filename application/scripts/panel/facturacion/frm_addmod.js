@@ -30,21 +30,29 @@ $(function(){
       }
   });
 
-  $("#dcliente").autocomplete({
-      source: base_url+'panel/empresas/ajax_get_empresas',
+  $("#dempresa").autocomplete({
+      source: base_url+'panel/facturacion/ajax_get_empresas',
       minLength: 1,
       selectFirst: true,
       select: function( event, ui ) {
         $("#did_empresa").val(ui.item.id);
         $("#dempresa").css("background-color", "#B0FFB0");
+
+        loadSerieFolio(ui.item.id);
       }
   }).on("keydown", function(event){
       if(event.which == 8 || event == 46){
         $("#dempresa").val("").css("background-color", "#FFD9B3");
         $("#did_empresa").val("");
-        reAutocomplete();
+        $('#dserie').html('');
+        $("#dfolio").val("");
+        $("#dno_aprobacion").val("");
       }
   });
+
+  if ($('#did_empresa').val() !== '') {
+    loadSerieFolio($('#did_empresa').val());
+  }
 
   //Carga el folio para la serie seleccionada
   $("#dserie").on('change', function(){
@@ -153,6 +161,25 @@ function calculaTotal () {
   $('#total_letra').val(util.numeroToLetra.covertirNumLetras(total_factura.toString()))
 
 }
+
+function loadSerieFolio (ide) {
+  var objselect = $('#dserie');
+  loader.create();
+    $.getJSON(base_url+'panel/facturacion/get_series/?ide='+ide,
+      function(res){
+          if(res.msg === 'ok') {
+            var html_option = '<option value=""></option>';
+            for (var i in res.data){
+              html_option += '<option value="'+res.data[i].serie+'">'+res.data[i].serie+'</option>';
+            }
+            objselect.html(html_option);
+          } else {
+            noty({"text":res.msg, "layout":"topRight", "type":res.ico});
+          }
+          loader.close();
+      });
+}
+
 /**
  * Crea una cadena con la informacion del cliente para mostrarla
  * cuando se seleccione
