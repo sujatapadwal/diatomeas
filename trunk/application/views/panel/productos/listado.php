@@ -23,7 +23,7 @@
 					</div>
 					<div class="box-content">
 						<div id="prodic_familias" class="">
-							<?php 
+							<?php
 							echo $this->empleados_model->getLinkPrivSm('productos/agregar_familia/', array(
 									'params'   => '',
 									'btn_type' => 'btn-success',
@@ -39,7 +39,7 @@
 								//imprimimos la tabla de familias
 								if(isset($tabla_familias)){
 									echo $tabla_familias;
-								} 
+								}
 							?>
 							</div>
 						</div>
@@ -56,7 +56,7 @@
 					</div>
 					<div class="box-content">
 						<div id="produc_productos" class="">
-							
+
 						</div>
 
 					</div><!-- /box -->

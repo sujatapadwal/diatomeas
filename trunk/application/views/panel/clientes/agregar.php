@@ -1,6 +1,6 @@
 		<div id="content" class="span10">
 			<!-- content starts -->
-			
+
 
 			<div>
 				<ul class="breadcrumb">
@@ -62,7 +62,7 @@
 												<input type="text" name="dno_interior" id="dno_interior" class="span12" value="<?php echo set_value('dno_interior'); ?>" maxlength="7">
 											</div>
 										</div>
-										
+
 										<div class="control-group">
 											<label class="control-label" for="dcolonia">Colonia:</label>
 											<div class="controls">
@@ -76,7 +76,7 @@
 												<input type="text" name="dlocalidad" id="dlocalidad" class="span12" value="<?php echo set_value('dlocalidad'); ?>" maxlength="45">
 											</div>
 										</div>
-										
+
 										<div class="control-group">
 											<label class="control-label" for="dmunicipio">Municipio / Delegación:</label>
 											<div class="controls">
@@ -90,7 +90,7 @@
 												<input type="text" name="destado" id="destado" class="span12" value="<?php echo set_value('destado'); ?>" maxlength="45">
 											</div>
 										</div>
-										
+
 										<div class="control-group">
 											<label class="control-label" for="dcp">CP:</label>
 											<div class="controls">
@@ -114,7 +114,7 @@
 												<input type="text" name="dcelular" id="dcelular" class="span12" value="<?php echo set_value('dcelular'); ?>" maxlength="20">
 											</div>
 										</div>
-										
+
 										<div class="control-group">
 											<label class="control-label" for="demail">Email:</label>
 											<div class="controls">
@@ -128,7 +128,7 @@
 												<input type="text" name="dpag_web" id="dpag_web" class="span12" value="<?php echo set_value('dpag_web'); ?>" maxlength="80">
 											</div>
 										</div>
-										
+
 										<div class="control-group">
 											<label class="control-label" for="dlista_precio">Lista de precio:</label>
 											<div class="controls">
@@ -143,7 +143,7 @@
 												</select>
 											</div>
 										</div>
-										
+
 										<div class="control-group">
 											<label class="control-label" for="drecepcion_facturas">Recepción facturas:</label>
 											<div class="controls">
@@ -173,7 +173,7 @@
 												</select>
 											</div>
 										</div>
-										
+
 										<div class="control-group">
 											<label class="control-label" for="ddescuento">Descuento:</label>
 											<div class="controls">
@@ -208,14 +208,14 @@
 											<input type="checkbox" name="demismos_facturacion" id="demismos_facturacion">
 										</div>
 									</div>
-									
+
 									<div class="control-group">
 										<label class="control-label" for="denombre">Nombre:</label>
 										<div class="controls">
 											<input type="text" name="denombre" id="denombre" class="span6" value="<?php echo set_value('denombre'); ?>" maxlength="130">
 										</div>
 									</div>
-									
+
 									<div class="control-group">
 										<label class="control-label" for="decalle">Calle:</label>
 										<div class="controls">
@@ -234,7 +234,7 @@
 											<input type="text" name="deno_interior" id="deno_interior" class="span6" value="<?php echo set_value('deno_interior'); ?>" maxlength="7">
 										</div>
 									</div>
-									
+
 									<div class="control-group">
 										<label class="control-label" for="decolonia">Colonia:</label>
 										<div class="controls">
@@ -248,7 +248,7 @@
 											<input type="text" name="delocalidad" id="delocalidad" class="span6" value="<?php echo set_value('delocalidad'); ?>" maxlength="45">
 										</div>
 									</div>
-									
+
 									<div class="control-group">
 										<label class="control-label" for="demunicipio">Municipio / Delegación:</label>
 										<div class="controls">
@@ -262,7 +262,7 @@
 											<input type="text" name="deestado" id="deestado" class="span6" value="<?php echo set_value('deestado'); ?>" maxlength="45">
 										</div>
 									</div>
-									
+
 									<div class="control-group">
 										<label class="control-label" for="decp">CP:</label>
 										<div class="controls">
@@ -328,15 +328,15 @@
 					</div><!--/box span-->
 
 				</div><!--/row-->
-				
+
 				<div class="form-actions">
 				  <button type="submit" class="btn btn-primary">Guardar</button>
 				  <button type="reset" class="btn">Cancelar</button>
 				</div>
 
 			</form>
-				  
-       
+
+
 					<!-- content ends -->
 		</div><!--/#content.span10-->
 
@@ -344,7 +344,7 @@
 
 <!-- Bloque de alertas -->
 <?php if(isset($frm_errors)){
-	if($frm_errors['msg'] != ''){ 
+	if($frm_errors['msg'] != ''){
 ?>
 <script type="text/javascript" charset="UTF-8">
 	$(document).ready(function(){
