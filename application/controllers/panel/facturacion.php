@@ -340,9 +340,9 @@ class facturacion extends MY_Controller {
       $pdf->Cell(118, 4, $www, 0, 0, 'C');
 
       $pdf->SetXY(170, 15);
-      $pdf->SetFont('Arial','', 16);
+      $pdf->SetFont('Arial','', 12);
       $pdf->SetTextColor(204, 0, 0);
-      $pdf->Cell(37, 6, $data['info']->id_factura, 0, 0, 'C');
+      $pdf->Cell(37, 6, ($data['info']->serie!=''? $data['info']->serie: '').$data['info']->folio, 0, 0, 'C');
 
       $pdf->SetFont('Arial','B', 7);
       $pdf->SetTextColor(0, 0, 0);

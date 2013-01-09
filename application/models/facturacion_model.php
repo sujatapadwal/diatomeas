@@ -12,7 +12,7 @@ class facturacion_model extends privilegios_model{
 	 * **********************************************
 	 * Obtiene el listado de facturas
 	 */
-	public function getFacturas($perpage = '40'){
+	public function getFacturas($perpage = '40', $sql2=''){
 		$sql = '';
 		//paginacion
 		$params = array(
@@ -47,7 +47,7 @@ class facturacion_model extends privilegios_model{
 				FROM facturas AS f
         INNER JOIN empresas AS e ON e.id_empresa = f.id_empresa
         INNER JOIN clientes AS c ON c.id_cliente = f.id_cliente
-				WHERE 1 = 1".$sql."
+				WHERE 1 = 1".$sql.$sql2."
 				ORDER BY (Date(f.fecha)) DESC
 				", $params, true);
 		$res = $this->db->query($query['query']);
@@ -541,6 +541,9 @@ class facturacion_model extends privilegios_model{
 
    public function rvc_pdf()
    {
+      $_GET['ffecha1'] = date("Y-m").'-01';
+      $_GET['ffecha2'] = date("Y-m-d");
+
       $data = $this->getFacturas('10000');
 
       $this->load->library('mypdf');
@@ -548,6 +551,7 @@ class facturacion_model extends privilegios_model{
       $pdf = new MYpdf('P', 'mm', 'Letter');
       $pdf->show_head = true;
       $pdf->titulo2 = 'Reporte Ventas Cliente';
+
 
       if (!empty($_GET['ffecha1']) && !empty($_GET['ffecha2']))
         $pdf->titulo3 = "Del ".$_GET['ffecha1']." al ".$_GET['ffecha2']."";

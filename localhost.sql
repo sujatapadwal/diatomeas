@@ -41,10 +41,6 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 -- Volcar la base de datos para la tabla `ci_sessions`
 --
 
-INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('641d7cdc55091d890e13bde0ceb78791', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11 AlexaToolba', 1357183733, 'a:6:{s:9:"user_data";s:0:"";s:10:"id_usuario";s:1:"1";s:6:"nombre";s:5:"Admin";s:5:"email";s:15:"admin@gmail.com";s:6:"acceso";s:5:"admin";s:7:"idunico";s:24:"l50e4fb008c5ec7.87314208";}'),
-('f4d47e93f74387dc411d17b383e1ec7c', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11 AlexaToolba', 1357239124, 'a:6:{s:9:"user_data";s:0:"";s:10:"id_usuario";s:1:"1";s:6:"nombre";s:5:"Admin";s:5:"email";s:15:"admin@gmail.com";s:6:"acceso";s:5:"admin";s:7:"idunico";s:24:"l50e5d3608c3d78.48744304";}');
-
 -- --------------------------------------------------------
 
 --
@@ -74,14 +70,11 @@ CREATE TABLE IF NOT EXISTS `clientes` (
   `status` enum('ac','e') NOT NULL DEFAULT 'ac',
   PRIMARY KEY (`id_cliente`),
   KEY `id_lista_precio` (`id_lista_precio`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Volcar la base de datos para la tabla `clientes`
 --
-
-INSERT INTO `clientes` (`id_cliente`, `id_lista_precio`, `nombre_fiscal`, `calle`, `no_exterior`, `no_interior`, `colonia`, `localidad`, `municipio`, `estado`, `cp`, `rfc`, `recepcion_facturas`, `dias_pago`, `descuento`, `telefono`, `celular`, `pag_web`, `email`, `status`) VALUES
-(1, 1, 'Gamaliel Mendoza solis', 'ALBAÑILES', '542', '12', 'CORREGIDORA', '', 'COLIMA', 'COLIMA', 28919, '0', 'Martes', 'Domingo', 5, '3039188', '31289382', '', '', 'ac');
 
 -- --------------------------------------------------------
 
@@ -102,16 +95,11 @@ CREATE TABLE IF NOT EXISTS `clientes_contacto` (
   `puesto` varchar(20) NOT NULL,
   PRIMARY KEY (`id_contacto`),
   KEY `id_cliente` (`id_cliente`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Volcar la base de datos para la tabla `clientes_contacto`
 --
-
-INSERT INTO `clientes_contacto` (`id_contacto`, `id_cliente`, `nombre`, `fax`, `nextel`, `nextel_id`, `telefono`, `celular`, `extension`, `puesto`) VALUES
-(1, 1, 'Abrahan', '', '329832', '99382*33*22', '32093203', '3923892', '39238', 'Ventas'),
-(7, 1, 'das', '', '', '', 'asd', 'asd', 'asd', 'asd'),
-(8, 1, 'asd', 'asd', 'asd', 'asd', 'asd', 'asd', 'asd', 'asd');
 
 -- --------------------------------------------------------
 
@@ -137,8 +125,37 @@ CREATE TABLE IF NOT EXISTS `clientes_extra` (
 -- Volcar la base de datos para la tabla `clientes_extra`
 --
 
-INSERT INTO `clientes_extra` (`id_cliente`, `nombre`, `calle`, `no_exterior`, `no_interior`, `colonia`, `localidad`, `municipio`, `estado`, `cp`) VALUES
-(1, 'Gamaliel Mendoza solis', 'ALBAÑILES', '542', '', 'CORREGIDORA', '', 'COLIMA', 'COLIMA', '28919');
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `empresas`
+--
+
+CREATE TABLE IF NOT EXISTS `empresas` (
+  `id_empresa` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `nombre_fiscal` varchar(130) NOT NULL,
+  `calle` varchar(60) NOT NULL,
+  `no_exterior` varchar(7) NOT NULL,
+  `no_interior` varchar(7) NOT NULL,
+  `colonia` varchar(60) NOT NULL,
+  `localidad` varchar(45) NOT NULL,
+  `municipio` varchar(45) NOT NULL,
+  `estado` varchar(45) NOT NULL,
+  `cp` int(10) NOT NULL,
+  `rfc` varchar(13) NOT NULL,
+  `telefono` varchar(15) NOT NULL,
+  `celular` varchar(20) NOT NULL,
+  `status` enum('ac','e') NOT NULL DEFAULT 'ac',
+  `email` varchar(80) NOT NULL,
+  `pag_web` varchar(70) NOT NULL,
+  `logo` varchar(130) NOT NULL,
+  `regimen_fiscal` varchar(200) NOT NULL DEFAULT '''''',
+  PRIMARY KEY (`id_empresa`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Volcar la base de datos para la tabla `empresas`
+--
 
 -- --------------------------------------------------------
 
@@ -150,6 +167,7 @@ CREATE TABLE IF NOT EXISTS `facturas` (
   `id_factura` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `id_cliente` bigint(20) unsigned NOT NULL,
   `id_usuario` bigint(20) unsigned NOT NULL,
+  `id_empresa` bigint(20) unsigned NOT NULL,
   `serie` varchar(30) NOT NULL,
   `folio` bigint(20) NOT NULL,
   `no_aprobacion` bigint(20) NOT NULL,
@@ -170,13 +188,14 @@ CREATE TABLE IF NOT EXISTS `facturas` (
   `ciudad` varchar(220) NOT NULL,
   `status` enum('p','pa','ca') NOT NULL DEFAULT 'pa' COMMENT 'p:pendiente, pa:pagada, ca:cancelada',
   PRIMARY KEY (`id_factura`),
-  KEY `id_cliente` (`id_cliente`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  KEY `id_cliente` (`id_cliente`),
+  KEY `id_empresa` (`id_empresa`),
+  KEY `id_usuario` (`id_usuario`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Volcar la base de datos para la tabla `facturas`
 --
-
 
 -- --------------------------------------------------------
 
@@ -197,13 +216,40 @@ CREATE TABLE IF NOT EXISTS `facturas_productos` (
   `total` double NOT NULL,
   `descuento` float NOT NULL DEFAULT '0' COMMENT 'Es el % del descuento',
   `retencion` float NOT NULL DEFAULT '0' COMMENT 'Es el % de la retencion',
-  PRIMARY KEY (`id_fac_prod`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  PRIMARY KEY (`id_fac_prod`),
+  KEY `id_factura` (`id_factura`),
+  KEY `id_producto` (`id_producto`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Volcar la base de datos para la tabla `facturas_productos`
 --
 
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `facturas_series_folios`
+--
+
+CREATE TABLE IF NOT EXISTS `facturas_series_folios` (
+  `id_serie_folio` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id_empresa` bigint(20) unsigned NOT NULL,
+  `serie` varchar(30) NOT NULL,
+  `no_aprobacion` bigint(20) unsigned NOT NULL,
+  `folio_inicio` bigint(20) unsigned NOT NULL,
+  `folio_fin` bigint(20) unsigned NOT NULL,
+  `imagen` varchar(200) NOT NULL,
+  `leyenda` varchar(70) NOT NULL,
+  `leyenda1` text NOT NULL,
+  `leyenda2` text NOT NULL,
+  `ano_aprobacion` date NOT NULL,
+  PRIMARY KEY (`id_serie_folio`),
+  KEY `id_empresa` (`id_empresa`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Volcar la base de datos para la tabla `facturas_series_folios`
+--
 
 -- --------------------------------------------------------
 
@@ -233,7 +279,7 @@ CREATE TABLE IF NOT EXISTS `privilegios` (
   `url_icono` varchar(100) NOT NULL,
   `target_blank` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_privilegio`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=25 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=39 ;
 
 --
 -- Volcar la base de datos para la tabla `privilegios`
@@ -263,7 +309,21 @@ INSERT INTO `privilegios` (`id_privilegio`, `nombre`, `id_padre`, `mostrar_menu`
 (21, 'Agregar Contacto', 19, 0, 'clientes/agregar_contacto/', 'plus', 0),
 (22, 'Eliminar', 19, 0, 'clientes/eliminar/', 'remove', 0),
 (23, 'Eliminar Contacto', 19, 0, 'clientes/eliminar_contacto/', 'remove', 0),
-(24, 'Modificar', 19, 0, 'clientes/modificar/', 'edit', 0);
+(24, 'Modificar', 19, 0, 'clientes/modificar/', 'edit', 0),
+(25, 'Empresas', 0, 1, 'empresas/', 'book', 0),
+(26, 'Agregar', 25, 1, 'empresas/agregar/', 'plus', 0),
+(27, 'Modificar', 25, 0, 'empresas/modificar/', 'edit', 0),
+(28, 'Eliminar', 25, 0, 'empresas/eliminar/', 'remove', 0),
+(29, 'Facturación', 0, 1, 'facturacion/', 'file', 0),
+(30, 'Series y Folios', 29, 1, 'facturacion/series_folios/', 'th', 0),
+(31, 'Agregar', 30, 1, 'facturacion/agregar_serie_folio/', 'plus', 0),
+(32, 'Agregar', 29, 1, 'facturacion/agregar/', 'plus', 0),
+(33, 'Modificar', 30, 0, 'facturacion/modificar_serie_folio/', 'edit', 0),
+(34, 'Pagar', 29, 0, 'facturacion/pagar/', 'inbox', 0),
+(35, 'Cancelar', 29, 0, 'facturacion/cancelar/', 'ban-circle', 0),
+(36, 'Imprimir', 29, 0, 'facturacion/imprimir/', 'print', 0),
+(37, 'Reporte Ventas Cliente', 29, 1, 'facturacion/rvc/', 'book', 0),
+(38, 'Reporte Ventas Producto', 29, 1, 'facturacion/rvp/', 'book', 0);
 
 -- --------------------------------------------------------
 
@@ -281,17 +341,11 @@ CREATE TABLE IF NOT EXISTS `productos` (
   PRIMARY KEY (`id_producto`),
   KEY `id_familia` (`id_familia`),
   KEY `id_unidad` (`id_unidad`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Volcar la base de datos para la tabla `productos`
 --
-
-INSERT INTO `productos` (`id_producto`, `id_familia`, `id_unidad`, `codigo`, `nombre`, `status`) VALUES
-(1, 1, 5, '1-1', 'Producto 1 familia 1', 'ac'),
-(2, 1, 6, '1-2', 'Producto 2 familia 1', 'ac'),
-(3, 1, 4, '1-3', 'Producto 11 familia 1', 'ac'),
-(4, 2, 9, '2-23', 'sdfsdfsdf sdfsd fsd sld flksdj lfksjd klfjs ldkfjslkdjflskd jflksdj lk', 'e');
 
 -- --------------------------------------------------------
 
@@ -305,19 +359,12 @@ CREATE TABLE IF NOT EXISTS `productos_familias` (
   `nombre` varchar(60) NOT NULL,
   `status` enum('ac','e') NOT NULL DEFAULT 'ac' COMMENT 'ac:activo, e:eliminado',
   PRIMARY KEY (`id_familia`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Volcar la base de datos para la tabla `productos_familias`
 --
 
-INSERT INTO `productos_familias` (`id_familia`, `codigo`, `nombre`, `status`) VALUES
-(1, '1', 'Familia 1', 'ac'),
-(2, '2', 'Familia 2', 'ac'),
-(3, '23123123', 'sasd asd asd asd as dasd ad asd asd asd asd asd asd kaj sdlk', 'e'),
-(4, '2ds', 'das', 'e'),
-(5, 'asd', 'asd', 'e'),
-(6, 'as', 'asd', 'e');
 
 -- --------------------------------------------------------
 
@@ -330,18 +377,14 @@ CREATE TABLE IF NOT EXISTS `productos_listas` (
   `nombre` varchar(30) NOT NULL,
   `es_default` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_lista`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 --
 -- Volcar la base de datos para la tabla `productos_listas`
 --
 
 INSERT INTO `productos_listas` (`id_lista`, `nombre`, `es_default`) VALUES
-(1, 'Default', 0),
-(2, 'Lista 1', 0),
-(3, 'Lista de precios 2', 0),
-(4, 'Lista 3', 0),
-(5, 'Lista 4', 0);
+(1, 'Default', 1);
 
 -- --------------------------------------------------------
 
@@ -361,10 +404,6 @@ CREATE TABLE IF NOT EXISTS `productos_listas_precios` (
 -- Volcar la base de datos para la tabla `productos_listas_precios`
 --
 
-INSERT INTO `productos_listas_precios` (`id_lista`, `id_producto`, `precio`) VALUES
-(1, 1, 43.5),
-(1, 2, 40),
-(1, 3, 32);
 
 -- --------------------------------------------------------
 
@@ -418,7 +457,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `nombre`, `email`, `pass`, `fecha_registro`, `tipo`, `facebook_user_id`, `status`) VALUES
-(1, 'Admin', 'admin@gmail.com', '12345', '2012-11-07 21:56:37', 'admin', NULL, 1);
+(1, 'Admin', 'admin', '12345', '2012-11-07 21:56:37', 'admin', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -461,7 +500,21 @@ INSERT INTO `usuarios_privilegios` (`id_usuario`, `id_privilegio`) VALUES
 (1, 21),
 (1, 22),
 (1, 23),
-(1, 24);
+(1, 24),
+(1, 25),
+(1, 26),
+(1, 27),
+(1, 28),
+(1, 29),
+(1, 30),
+(1, 31),
+(1, 32),
+(1, 33),
+(1, 34),
+(1, 35),
+(1, 36),
+(1, 37),
+(1, 38);
 
 -- --------------------------------------------------------
 
@@ -495,6 +548,28 @@ ALTER TABLE `clientes_extra`
   ADD CONSTRAINT `clientes_extra_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Filtros para la tabla `facturas`
+--
+ALTER TABLE `facturas`
+  ADD CONSTRAINT `facturas_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `facturas_ibfk_2` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `facturas_ibfk_3` FOREIGN KEY (`id_empresa`) REFERENCES `empresas` (`id_empresa`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `facturas_ibfk_4` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `facturas_productos`
+--
+ALTER TABLE `facturas_productos`
+  ADD CONSTRAINT `facturas_productos_ibfk_1` FOREIGN KEY (`id_factura`) REFERENCES `facturas` (`id_factura`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `facturas_productos_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `facturas_series_folios`
+--
+ALTER TABLE `facturas_series_folios`
+  ADD CONSTRAINT `facturas_series_folios_ibfk_1` FOREIGN KEY (`id_empresa`) REFERENCES `empresas` (`id_empresa`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `productos`
 --
 ALTER TABLE `productos`
@@ -514,3 +589,18 @@ ALTER TABLE `productos_listas_precios`
 ALTER TABLE `usuarios_privilegios`
   ADD CONSTRAINT `usuarios_privilegios_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `usuarios_privilegios_ibfk_2` FOREIGN KEY (`id_privilegio`) REFERENCES `privilegios` (`id_privilegio`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+DELIMITER $$
+--
+-- Funciones
+--
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_precio_producto`(vid_cliente BIGINT, vid_producto BIGINT) RETURNS varchar(100) CHARSET utf8
+BEGIN
+ DECLARE price DOUBLE;
+ SELECT precio INTO price
+  FROM productos_listas_precios
+  WHERE id_producto = vid_producto AND id_lista = (SELECT id_lista_precio FROM clientes WHERE id_cliente = vid_cliente);
+ return price;
+END$$
+
+DELIMITER ;
