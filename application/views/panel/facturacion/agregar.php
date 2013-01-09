@@ -106,7 +106,7 @@
         <div class="control-group">
           <label class="control-label" for="dmetodo_pago_digitos">Ultimos 4 digitos</label>
           <div class="controls">
-            <input type="text" name="dmetodo_pago_digitos" class="span9" id="dmetodo_pago_digitos" value="<?php echo set_value('dmetodo_pago_digitos'); ?>" maxlength="4">
+            <input type="text" name="dmetodo_pago_digitos" class="span9" id="dmetodo_pago_digitos" value="<?php echo set_value('dmetodo_pago_digitos', 'No identificado'); ?>">
           </div>
         </div>
 
@@ -148,7 +148,7 @@
           </select></div>
 
           <div class="input-prepend input-append" style="margin-top:10px;"><span class="add-on">Medida</span><input class="input-mini" name="dmedida" id="dmedida" type="text"></div>
-          <div class="input-prepend input-append"><span class="add-on">Desc %</span><input class="input-mini vpos-int" name="ddescuento" id="ddescuento" type="number" min="0" max="100"></div>
+          <div class="input-prepend input-append"><span class="add-on">Desc %</span><input class="input-mini vpos-int" name="ddescuento" value="0" id="ddescuento" type="number" min="0" max="100"></div>
           <div class="input-prepend input-append"><span class="add-on">Retención</span><select name="dreten_iva" id="dreten_iva" class="input-small">
               <option value="0" <?php echo set_select('dreten_iva', '0'); ?>>No retener</option>
               <option value="0.04" <?php echo set_select('dreten_iva', '0.04'); ?>>4%</option>

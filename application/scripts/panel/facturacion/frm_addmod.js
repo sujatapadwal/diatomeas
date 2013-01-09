@@ -57,7 +57,7 @@ $(function(){
   //Carga el folio para la serie seleccionada
   $("#dserie").on('change', function(){
     loader.create();
-    $.getJSON(base_url+'panel/facturacion/get_folio/?serie='+$(this).val(),
+    $.getJSON(base_url+'panel/facturacion/get_folio/?serie='+$(this).val()+'&ide='+$('#did_empresa').val(),
     function(res){
       if(res.msg == 'ok'){
         $("#dfolio").val(res.data.folio);
@@ -90,22 +90,22 @@ $(function(){
 });
 
 function addProducto() {
-  var importe = roundDecimals(parseFloat($('#dcantidad').val() * parseFloat($('#dpreciou').val()))),
-      descuento = roundDecimals((importe * parseFloat($('#ddescuento').val())) / 100),
-      iva = roundDecimals(((importe - descuento) * parseFloat($('#diva option:selected').val())) / 100),
-      retencion = roundDecimals(iva * parseFloat($('#dreten_iva option:selected').val()));
+  var importe   = trunc2Dec(parseFloat($('#dcantidad').val() * parseFloat($('#dpreciou').val()))),
+      descuento = trunc2Dec((importe * parseFloat($('#ddescuento').val())) / 100),
+      iva       = trunc2Dec(((importe - descuento) * parseFloat($('#diva option:selected').val())) / 100),
+      retencion = trunc2Dec(iva * parseFloat($('#dreten_iva option:selected').val()));
 
-  var html_td = '<tr><td><input type="text" name="prod_did_prod[]" value="'+$('#did_prod').val()+'" id="prod_did_prod">' +
-                         '<input type="text" name="prod_dcantidad[]" value="'+$('#dcantidad').val()+'" id="prod_dcantidad">'+$('#dcantidad').val()+'</td>' +
-                '<td><input type="text" name="prod_ddescripcion[]" value="'+$('#ddescripcion').val()+'" id="prod_ddescripcion">'+$('#ddescripcion').val()+'</td>' +
-                '<td><input type="text" name="prod_ddescuento[]" value="'+descuento+'" id="prod_ddescuento"><input type="text" name="prod_ddescuento_porcent[]" value="'+$('#ddescuento').val()+'" id="prod_ddescuento_porcent">'+$('#ddescuento').val()+'%</td>' +
-                '<td><input type="text" name="prod_dpreciou[]" value="'+$('#dpreciou').val()+'" id="prod_dpreciou">'+util.darFormatoNum($('#dpreciou').val())+'</td>' +
-                '<td><input type="text" name="prod_importe[]" value="'+importe+'" id="prod_importe">'+util.darFormatoNum(importe)+'</td>' +
-                '<td><input type="text" name="prod_diva_total[]" value="'+iva+'" id="prod_diva_total"> ' +
-                    '<input type="text" name="prod_dreten_iva_total[]" value="'+retencion+'" id="prod_dreten_iva_total">' +
-                    '<input type="text" name="prod_dreten_iva_porcent[]" value="'+$('#dreten_iva option:selected').val()+'" id="prod_dreten_iva_porcent">' +
-                    '<input type="text" name="prod_diva_porcent[]" value="'+$('#diva').val()+'" id="prod_diva_porcent">'+$('#diva').val()+'%</td>' +
-                '<td><input type="text" name="prod_dmedida[]" value="'+$('#dmedida').val()+'">'+$('#dmedida').val()+'</td>' +
+  var html_td = '<tr><td><input type="hidden" name="prod_did_prod[]" value="'+$('#did_prod').val()+'" id="prod_did_prod">' +
+                         '<input type="hidden" name="prod_dcantidad[]" value="'+$('#dcantidad').val()+'" id="prod_dcantidad">'+$('#dcantidad').val()+'</td>' +
+                '<td><input type="hidden" name="prod_ddescripcion[]" value="'+$('#ddescripcion').val()+'" id="prod_ddescripcion">'+$('#ddescripcion').val()+'</td>' +
+                '<td><input type="hidden" name="prod_ddescuento[]" value="'+descuento+'" id="prod_ddescuento"><input type="hidden" name="prod_ddescuento_porcent[]" value="'+$('#ddescuento').val()+'" id="prod_ddescuento_porcent">'+$('#ddescuento').val()+'%</td>' +
+                '<td><input type="hidden" name="prod_dpreciou[]" value="'+$('#dpreciou').val()+'" id="prod_dpreciou">'+util.darFormatoNum($('#dpreciou').val())+'</td>' +
+                '<td><input type="hidden" name="prod_importe[]" value="'+importe+'" id="prod_importe">'+util.darFormatoNum(importe)+'</td>' +
+                '<td><input type="hidden" name="prod_diva_total[]" value="'+iva+'" id="prod_diva_total"> ' +
+                    '<input type="hidden" name="prod_dreten_iva_total[]" value="'+retencion+'" id="prod_dreten_iva_total">' +
+                    '<input type="hidden" name="prod_dreten_iva_porcent[]" value="'+$('#dreten_iva option:selected').val()+'" id="prod_dreten_iva_porcent">' +
+                    '<input type="hidden" name="prod_diva_porcent[]" value="'+$('#diva').val()+'" id="prod_diva_porcent">'+$('#diva').val()+'%</td>' +
+                '<td><input type="hidden" name="prod_dmedida[]" value="'+$('#dmedida').val()+'">'+$('#dmedida').val()+'</td>' +
                 '<td><button type="button" class="btn btn-danger" id="delProd"><i class="icon-remove"></i></button></td></tr>';
 
   $('#table_prod').find('tbody').append(html_td);
@@ -170,7 +170,7 @@ function loadSerieFolio (ide) {
           if(res.msg === 'ok') {
             var html_option = '<option value=""></option>';
             for (var i in res.data){
-              html_option += '<option value="'+res.data[i].serie+'">'+res.data[i].serie+'</option>';
+              html_option += '<option value="'+res.data[i].serie+'">'+res.data[i].serie+' - '+res.data[i].leyenda+'</option>';
             }
             objselect.html(html_option);
           } else {
@@ -244,10 +244,6 @@ function valida_agregar () {
   else return true;
 }
 
-function roundDecimals(val) {
-  return Math.round(val*100)/100
-}
-
 /**
  * Modificacion del plugin autocomplete
  */
@@ -266,3 +262,11 @@ $.widget( "custom.catcomplete", $.ui.autocomplete, {
     });
   }
 });
+
+function trunc2Dec(num) {
+  return Math.floor(num * 100) / 100;
+}
+
+function round2Dec(val) {
+  return Math.round(val * 100) / 100;
+}

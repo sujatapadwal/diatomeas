@@ -87,7 +87,8 @@
                       {
                         echo $this->empleados_model->getLinkPrivSm('facturacion/pagar/', array(
                           'params'   => 'id='.$fact->id_factura,
-                          'btn_type' => 'btn-success')
+                          'btn_type' => 'btn-success',
+                          'attrs' => array('onclick' => "msb.confirm('Estas seguro de Pagar la factura?', 'Facturas', this); return false;"))
                         );
                       }
 
@@ -95,7 +96,8 @@
                       {
                         echo $this->empleados_model->getLinkPrivSm('facturacion/cancelar/', array(
                           'params'   => 'id='.$fact->id_factura,
-                          'btn_type' => 'btn-danger')
+                          'btn_type' => 'btn-danger',
+                          'attrs' => array('onclick' => "msb.confirm('Estas seguro de Cancelar la factura?', 'Facturas', this); return false;"))
                         );
                       }
 
