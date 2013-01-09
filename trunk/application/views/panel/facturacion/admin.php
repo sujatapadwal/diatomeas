@@ -103,7 +103,8 @@
 
                       echo $this->empleados_model->getLinkPrivSm('facturacion/imprimir/', array(
                           'params'   => 'id='.$fact->id_factura,
-                          'btn_type' => 'btn-info')
+                          'btn_type' => 'btn-info',
+                          'attrs' => array('target' => "_blank"))
                       );
                     ?>
                   </td>

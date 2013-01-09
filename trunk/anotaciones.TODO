@@ -16,3 +16,9 @@ los datos que se cargan en el autocomplete no sera campo por campo, solo sera do
    - campos a mostrar: codigo, producto, cantidad, importe
    - filtro: rango de fechas, familia | de las facturas que no esten canceladas
 
+
+   -validar el guardar la factura que la serie y folio no se repita para la empresa *
+   -donde se cargan los productos de facturacion que no se envie el form de la factura, que ejecute la funcion de agregar producto a la lista *
+   -al imprimir la factura no salen los productos de tipo descripcion *
+   -al guardarse la factura que abra una ventana con el pdf *
+

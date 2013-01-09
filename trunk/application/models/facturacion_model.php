@@ -12,7 +12,7 @@ class facturacion_model extends privilegios_model{
 	 * **********************************************
 	 * Obtiene el listado de facturas
 	 */
-	public function getFacturas($perpage = '30'){
+	public function getFacturas($perpage = '40'){
 		$sql = '';
 		//paginacion
 		$params = array(
@@ -86,10 +86,10 @@ class facturacion_model extends privilegios_model{
 			$response['info']->cliente = $prov['info'];
 
       $res = $this->db->select('fp.id_fac_prod, fp.id_factura, fp.id_producto, fp.descripcion, fp.taza_iva, fp.cantidad, fp.precio_unitario,
-                                fp.importe, fp.importe_iva, fp.total, fp.descuento, fp.retencion, pu.abreviatura as unidad')->
+                                fp.importe, fp.importe_iva, fp.total, fp.descuento, fp.retencion, pu.abreviatura as unidad, fp.unidad as unidad2')->
                         from('facturas_productos as fp')->
-                        join('productos as p', 'p.id_producto = fp.id_producto', 'inner')->
-                        join('productos_unidades as pu', 'pu.id_unidad = p.id_unidad', 'inner')->
+                        join('productos as p', 'p.id_producto = fp.id_producto', 'left')->
+                        join('productos_unidades as pu', 'pu.id_unidad = p.id_unidad', 'left')->
                         where('id_factura = '.$id)->get();
 
       $response['productos'] = $res->result();
@@ -106,7 +106,7 @@ class facturacion_model extends privilegios_model{
 	public function getFolioSerie($serie, $empresa){
 		$res = $this->db->select('folio')->
                       from('facturas')->
-                      where("serie = '".$serie."'")->
+                      where("serie = '".$serie."' AND id_empresa = ".$empresa)->
                       order_by('folio', 'DESC')->
                       limit(1)->get()->row();
 
@@ -215,6 +215,7 @@ class facturacion_model extends privilegios_model{
                                 'total'           => (floatval($_POST['prod_importe'][$k]) - $descuento) + (floatval($_POST['prod_diva_total'][$k]) - floatval($_POST['prod_dreten_iva_total'][$k])),
                                 'descuento'       => $_POST['prod_ddescuento_porcent'][$k],
                                 'retencion'       => $porc_reten,
+                                'unidad'          => $_POST['prod_dmedida'][$k],
                               );
     }
     $this->db->insert_batch('facturas_productos', $data_productos);

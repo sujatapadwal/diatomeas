@@ -7,9 +7,9 @@ class Usuarios extends MY_Controller {
 	 * @var unknown_type
 	 */
 	private $excepcion_privilegio = array('ajax_get_siguiente_numero');
-	
+
 	public function _remap($method){
-		
+
 		$this->load->model("empleados_model");
 		if($this->empleados_model->checkSession()){
 			$this->empleados_model->excepcion_privilegio = $this->excepcion_privilegio;
@@ -28,29 +28,29 @@ class Usuarios extends MY_Controller {
 		$this->carabiner->js(array(
 				array('general/msgbox.js')
 		));
-		
+
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
 		$params['seo'] = array(
 			'titulo' => 'Administración de Usuarios'
 		);
-		
+
 		$this->load->model('usuarios_model');
 		$params['usuarios'] = $this->usuarios_model->get_usuarios();
-		
-		if (isset($_GET['msg'])) 
+
+		if (isset($_GET['msg']))
 			$params['frm_errors'] = $this->showMsgs($_GET['msg']);
-		
+
 		$this->load->view('panel/header', $params);
 		$this->load->view('panel/general/menu', $params);
 		$this->load->view('panel/usuarios/admin', $params);
 		$this->load->view('panel/footer');
 	}
-	
+
 	/*
  	|	Muestra el Formulario para agregar un Usuarios
  	*/
 	public function agregar()
-	{		
+	{
 		$this->carabiner->css(array(
 			array('libs/jquery.uniform.css', 'screen'),
 			array('libs/jquery.treeview.css', 'screen')
@@ -60,12 +60,12 @@ class Usuarios extends MY_Controller {
 			array('libs/jquery.treeview.js'),
 			array('panel/usuarios/add_mod_frm.js')
 		));
-		
+
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
 		$params['seo'] = array(
 			'titulo' => 'Agregar Usuario'
 		);
-		
+
 		$this->config_add_usuario();
 		if ($this->form_validation->run() == FALSE)
 		{
@@ -75,27 +75,27 @@ class Usuarios extends MY_Controller {
 		{
 			$this->load->model('usuarios_model');
 			$res_mdl = $this->usuarios_model->setRegistro(FALSE, NULL);
-				
+
 			if(!$res_mdl['error'])
 				redirect(base_url('panel/usuarios/agregar/?'.String::getVarsLink(array('msg')).'&msg=3'));
 		}
-		
-		
+
+
 		if (isset($_GET['msg']))
 			$params['frm_errors'] = $this->showMsgs($_GET['msg']);
-			
+
 		$this->load->view('panel/header', $params);
 		$this->load->view('panel/general/menu', $params);
 		$this->load->view('panel/usuarios/agregar', $params);
 		$this->load->view('panel/footer');
 	}
-	
+
 	/*
  	|	Muestra el Formulario para modificar un usuario
  	*/
 	public function modificar()
-	{		
-		if (isset($_GET['id'])) 
+	{
+		if (isset($_GET['id']))
 		{
 			$this->carabiner->css(array(
 				array('libs/jquery.uniform.css', 'screen'),
@@ -106,14 +106,14 @@ class Usuarios extends MY_Controller {
 				array('libs/jquery.treeview.js'),
 				array('panel/usuarios/add_mod_frm.js')
 			));
-			
+
 			$this->load->model('usuarios_model');
-			
+
 			$params['info_empleado'] = $this->info_empleado['info']; //info empleado
 			$params['seo'] = array(
 				'titulo' => 'Modificar usuario'
 			);
-			
+
 			$this->config_add_usuario('modificar');
 			if ($this->form_validation->run() == FALSE)
 			{
@@ -122,57 +122,57 @@ class Usuarios extends MY_Controller {
 			else
 			{
 				$res_mdl = $this->usuarios_model->modificar_usuario();
-					
+
 				if($res_mdl['error'] == FALSE)
 					redirect(base_url('panel/usuarios/modificar/?'.String::getVarsLink(array('msg')).'&msg=4'));
 			}
-			
+
 			$params['data'] = $this->usuarios_model->get_usuario_info();
-			
-			if (isset($_GET['msg'])) 
+
+			if (isset($_GET['msg']))
 				$params['frm_errors'] = $this->showMsgs($_GET['msg']);
-			
+
 			$this->load->view('panel/header', $params);
 			$this->load->view('panel/general/menu', $params);
 			$this->load->view('panel/usuarios/modificar', $params);
 			$this->load->view('panel/footer');
 		}
-		else 
+		else
 			redirect(base_url('panel/usuarios/?'.String::getVarsLink(array('msg')).'&msg=1'));
 	}
-	
+
 	/*
  	|	Elimina un usuarios
  	*/
 	public function eliminar()
-	{		
-		if (isset($_GET['id'])) 
-		{			
+	{
+		if (isset($_GET['id']))
+		{
 			$this->load->model('usuarios_model');
 			$res_mdl = $this->usuarios_model->eliminar_usuario();
 			if($res_mdl)
 				redirect(base_url('panel/usuarios/?'.String::getVarsLink(array('msg')).'&msg=5'));
 		}
-		else 
+		else
 			redirect(base_url('panel/usuarios/?'.String::getVarsLink(array('msg')).'&msg=1'));
 	}
-	
+
 	/*
  	|	Activa un articulo
  	*/
 	public function activar()
-	{		
-		if (isset($_GET['id'])) 
-		{			
+	{
+		if (isset($_GET['id']))
+		{
 			$this->load->model('usuarios_model');
 			$res_mdl = $this->usuarios_model->activar_usuario();
 			if($res_mdl)
 				redirect(base_url('panel/usuarios/?'.String::getVarsLink(array('msg')).'&msg=6'));
 		}
-		else 
+		else
 			redirect(base_url('panel/usuarios/?'.String::getVarsLink(array('msg')).'&msg=1'));
 	}
-	
+
   /*
  	|	Asigna las reglas para validar un articulo al agregarlo
  	*/
@@ -180,36 +180,36 @@ class Usuarios extends MY_Controller {
 	{
 		$this->load->library('form_validation');
 		$rules = array(
-							array('field' => 'fnombre', 
-										'label' => 'Nombre', 
+							array('field' => 'fnombre',
+										'label' => 'Nombre',
 										'rules' => 'required|max_length[110]'),
-							array('field' => 'ftipo', 
-										'label' => 'Tipo de Usuario', 
+							array('field' => 'ftipo',
+										'label' => 'Tipo de Usuario',
 										'rules' => 'required'),
-							array('field' => 'dprivilegios[]', 
-										'label' => 'Privilegios', 
+							array('field' => 'dprivilegios[]',
+										'label' => 'Privilegios',
 										'rules' => 'is_natural_no_zero'),
 		);
-		
-		if ($accion == 'agregar') 
+
+		if ($accion == 'agregar')
 		{
-			$rules[] = 	array('field' => 'fpass', 
-												'label' => 'Password', 
+			$rules[] = 	array('field' => 'fpass',
+												'label' => 'Password',
 												'rules' => 'required|max_length[35]');
-			$rules[] = 	array('field' => 'femail', 
-												'label' => 'E-mail', 
-												'rules' => 'required|max_length[70]|valid_email|is_unique[usuarios.email]');
+			$rules[] = 	array('field' => 'femail',
+												'label' => 'Usuario',
+												'rules' => 'required|max_length[70]|is_unique[usuarios.email]');
 		}
 		else
 		{
-			$rules[] = 	array('field' => 'fpass', 
-												'label' => 'Password', 
+			$rules[] = 	array('field' => 'fpass',
+												'label' => 'Password',
 												'rules' => 'max_length[35]');
-			$rules[] = 	array('field' => 'femail', 
-												'label' => 'E-mail', 
-												'rules' => 'required|max_length[70]|valid_email|callback_valida_email');	
+			$rules[] = 	array('field' => 'femail',
+												'label' => 'Usuario',
+												'rules' => 'required|max_length[70]|callback_valida_email');
 		}
-		
+
 		$this->form_validation->set_rules($rules);
 	}
 
@@ -251,7 +251,7 @@ class Usuarios extends MY_Controller {
 				$icono = 'success';
 				break;
 		}
-	
+
 		return array(
 				'title' => $title,
 				'msg' => $txt,

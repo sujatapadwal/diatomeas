@@ -1,6 +1,6 @@
     <div id="content" class="span10">
       <!-- content starts -->
-      
+
 
       <div>
         <ul class="breadcrumb">
@@ -37,7 +37,7 @@
                   </div>
 
                   <div class="control-group">
-                    <label class="control-label" for="femail">*E-mail </label>
+                    <label class="control-label" for="femail">*Usuario </label>
                     <div class="controls">
                       <input type="text" name="femail" id="femail" class="span6" value="<?php echo isset($data['info'][0]->email)?$data['info'][0]->email:''; ?>" maxlength="70" placeholder="correo@gmail.com">
                     </div>
@@ -66,7 +66,7 @@
                     <label class="control-label" style="width: 100px;">Privilegios </label>
                     <div class="controls" style="margin-left: 120px;">
                       <div id="list_privilegios" style="height: 300px; overflow-y: auto; border:1px #ddd solid;">
-                        <?php 
+                        <?php
                           if($this->empleados_model->tienePrivilegioDe('', 'privilegios/index/')){
                             echo $this->empleados_model->getFrmPrivilegios(0, true, (isset($data['privilegios'])? $data['privilegios']: array()));
                           }
@@ -83,14 +83,14 @@
                   <button type="reset" class="btn">Cancelar</button>
                 </div>
               </fieldset>
-            </form>   
+            </form>
 
           </div>
         </div><!--/span-->
 
       </div><!--/row-->
-          
-       
+
+
           <!-- content ends -->
     </div><!--/#content.span10-->
 
@@ -98,7 +98,7 @@
 
 <!-- Bloque de alertas -->
 <?php if(isset($frm_errors)){
-  if($frm_errors['msg'] != ''){ 
+  if($frm_errors['msg'] != ''){
 ?>
 <script type="text/javascript" charset="UTF-8">
   $(document).ready(function(){
