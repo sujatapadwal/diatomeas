@@ -80,21 +80,22 @@ class empresas_model extends CI_Model{
 		}
 		
 		$data = array(
-			'nombre_fiscal' => $this->input->post('dnombre_fiscal'),
-			'calle'         => $this->input->post('dcalle'),
-			'no_exterior'   => $this->input->post('dno_exterior'),
-			'no_interior'   => $this->input->post('dno_interior'),
-			'colonia'       => $this->input->post('dcolonia'),
-			'localidad'     => $this->input->post('dlocalidad'),
-			'municipio'     => $this->input->post('dmunicipio'),
-			'estado'        => $this->input->post('destado'),
-			'cp'            => $this->input->post('dcp'),
-			'rfc'           => $this->input->post('drfc'),
-			'telefono'      => $this->input->post('dtelefono'),
-			'celular'       => $this->input->post('dcelular'),
-			'email'         => $this->input->post('demail'),
-			'pag_web'       => $this->input->post('dpag_web'),
-			'logo'          => $path_img
+			'nombre_fiscal'  => $this->input->post('dnombre_fiscal'),
+			'calle'          => $this->input->post('dcalle'),
+			'no_exterior'    => $this->input->post('dno_exterior'),
+			'no_interior'    => $this->input->post('dno_interior'),
+			'colonia'        => $this->input->post('dcolonia'),
+			'localidad'      => $this->input->post('dlocalidad'),
+			'municipio'      => $this->input->post('dmunicipio'),
+			'estado'         => $this->input->post('destado'),
+			'cp'             => $this->input->post('dcp'),
+			'rfc'            => $this->input->post('drfc'),
+			'telefono'       => $this->input->post('dtelefono'),
+			'celular'        => $this->input->post('dcelular'),
+			'email'          => $this->input->post('demail'),
+			'pag_web'        => $this->input->post('dpag_web'),
+			'logo'           => $path_img,
+			'regimen_fiscal' => $this->input->post('dregimen_fiscal')
 		);
 		$this->db->insert('empresas', $data);
 
@@ -123,21 +124,22 @@ class empresas_model extends CI_Model{
 		}
 		
 		$data = array(
-			'nombre_fiscal' => $this->input->post('dnombre_fiscal'),
-			'calle'         => $this->input->post('dcalle'),
-			'no_exterior'   => $this->input->post('dno_exterior'),
-			'no_interior'   => $this->input->post('dno_interior'),
-			'colonia'       => $this->input->post('dcolonia'),
-			'localidad'     => $this->input->post('dlocalidad'),
-			'municipio'     => $this->input->post('dmunicipio'),
-			'estado'        => $this->input->post('destado'),
-			'cp'            => $this->input->post('dcp'),
-			'rfc'           => $this->input->post('drfc'),
-			'telefono'      => $this->input->post('dtelefono'),
-			'celular'       => $this->input->post('dcelular'),
-			'email'         => $this->input->post('demail'),
-			'pag_web'       => $this->input->post('dpag_web'),
-			'logo'          => $path_img
+			'nombre_fiscal'  => $this->input->post('dnombre_fiscal'),
+			'calle'          => $this->input->post('dcalle'),
+			'no_exterior'    => $this->input->post('dno_exterior'),
+			'no_interior'    => $this->input->post('dno_interior'),
+			'colonia'        => $this->input->post('dcolonia'),
+			'localidad'      => $this->input->post('dlocalidad'),
+			'municipio'      => $this->input->post('dmunicipio'),
+			'estado'         => $this->input->post('destado'),
+			'cp'             => $this->input->post('dcp'),
+			'rfc'            => $this->input->post('drfc'),
+			'telefono'       => $this->input->post('dtelefono'),
+			'celular'        => $this->input->post('dcelular'),
+			'email'          => $this->input->post('demail'),
+			'pag_web'        => $this->input->post('dpag_web'),
+			'logo'           => $path_img,
+			'regimen_fiscal' => $this->input->post('dregimen_fiscal')
 		);
 		$this->db->update('empresas', $data, "id_empresa = '".$_GET['id']."'");
 

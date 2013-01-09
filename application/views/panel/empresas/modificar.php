@@ -113,6 +113,14 @@
 
 									<div class="span6 mquit">
 										<div class="control-group">
+											<label class="control-label" for="dregimen_fiscal">Régimen fiscal:</label>
+											<div class="controls">
+												<input type="text" name="dregimen_fiscal" id="dregimen_fiscal" class="span12" 
+													value="<?php echo (isset($info['info']->regimen_fiscal)? $info['info']->regimen_fiscal: ''); ?>" maxlength="200">
+											</div>
+										</div>
+
+										<div class="control-group">
 											<label class="control-label" for="dtelefono">Teléfono:</label>
 											<div class="controls">
 												<input type="text" name="dtelefono" id="dtelefono" class="span12" 
