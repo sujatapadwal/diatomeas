@@ -42,7 +42,8 @@ class facturacion_model extends privilegios_model{
       $sql .= " AND f.id_empresa = '".$this->input->get('did_empresa')."'";
 
 		$query = BDUtil::pagination("
-				SELECT f.id_factura, Date(f.fecha) AS fecha, f.serie, f.folio, c.nombre_fiscal, e.nombre_fiscal as empresa, f.condicion_pago, forma_pago,  f.status, f.total
+				SELECT f.id_factura, Date(f.fecha) AS fecha, f.serie, f.folio, c.nombre_fiscal,
+                e.nombre_fiscal as empresa, f.condicion_pago, forma_pago,  f.status, f.total
 				FROM facturas AS f
         INNER JOIN empresas AS e ON e.id_empresa = f.id_empresa
         INNER JOIN clientes AS c ON c.id_cliente = f.id_cliente
@@ -66,13 +67,14 @@ class facturacion_model extends privilegios_model{
 	/**
 	 * Obtiene la informacion de una factura
 	 */
-	public function getInfoFactura($id, $info_basic=false){
-		$res = $this->db
-			->select("*, (SELECT SUM(total) FROM facturas_abonos WHERE id_factura = facturas.id_factura) AS ab_total")
-			->from('facturas')
-			->where("id_factura = '".$id."'")
-		->get();
-		if($res->num_rows() > 0){
+	public function getInfoFactura($id, $info_basic=false)
+  {
+		$res = $this->db->select("*")->
+                      from('facturas')->
+                      where("id_factura = '".$id."'")->get();
+
+    if($res->num_rows() > 0)
+    {
 			$response['info'] = $res->row();
 			$response['info']->fecha = substr($response['info']->fecha, 0, 10);
 			$res->free_result();
@@ -83,56 +85,37 @@ class facturacion_model extends privilegios_model{
 			$prov = $this->clientes_model->getInfoCliente($response['info']->id_cliente, true);
 			$response['info']->cliente = $prov['info'];
 
-			//ordenes t
-			$response['ordenest'] = array();
-			$res = $this->db
-				->select('id_ordent')
-				->from('facturas_ordenest')
-				->where("id_factura = '".$id."'")
-			->get();
-			if($res->num_rows() > 0){
-				$response['ordenest'] = $res->result();
-			}
-			$res->free_result();
+      $res = $this->db->select('fp.id_fac_prod, fp.id_factura, fp.id_producto, fp.descripcion, fp.taza_iva, fp.cantidad, fp.precio_unitario,
+                                fp.importe, fp.importe_iva, fp.total, fp.descuento, fp.retencion, pu.abreviatura as unidad')->
+                        from('facturas_productos as fp')->
+                        join('productos as p', 'p.id_producto = fp.id_producto', 'inner')->
+                        join('productos_unidades as pu', 'pu.id_unidad = p.id_unidad', 'inner')->
+                        where('id_factura = '.$id)->get();
 
-			if(count($response['ordenest']) > 0){
-				$ids_ordns = '';
-				foreach($response['ordenest'] as $itm){
-					$ids_ordns .= "','".$itm->id_ordent;
-				}
-				$ids_ordns = substr($ids_ordns, 3);
-
-				//productos
-				$res = $this->db
-					->select('p.id_producto, p.codigo, p.nombre, pu.abreviatura as unidad, pu.nombre as unidad2, cp.taza_iva,
-							cp.cantidad, cp.precio_unitario, cp.importe, cp.importe_iva, cp.total')
-					->from('ordenest_productos AS cp')
-						->join('productos AS p', 'p.id_producto = cp.id_producto', 'inner')
-						->join('productos_unidades AS pu', 'p.id_unidad = pu.id_unidad', 'inner')
-					->where("cp.id_ordent IN ('".$ids_ordns."')")
-				->get();
-				if($res->num_rows() > 0){
-					$response['productos'] = $res->result();
-				}
-				$res->free_result();
-			}
+      $response['productos'] = $res->result();
 
 			return $response;
-		}else
+		}
+    else
 			return false;
 	}
 
 	/**
 	 * Obtiene el folio de acuerdo a la serie seleccionada
 	 */
-	public function getFolioSerie($serie){
-		$res = $this->db->select('folio')->from('facturas')
-			->where("serie = '".$serie."'")->order_by('folio', 'DESC')
-			->limit(1)->get()->row();
+	public function getFolioSerie($serie, $empresa){
+		$res = $this->db->select('folio')->
+                      from('facturas')->
+                      where("serie = '".$serie."'")->
+                      order_by('folio', 'DESC')->
+                      limit(1)->get()->row();
+
 		$folio = (isset($res->folio)? $res->folio: 0)+1;
 
-		$res = $this->db->select('*')->from('facturas_series_folios')
-			->where("serie = '".$serie."'")->limit(1)->get()->row();
+		$res = $this->db->select('*')->
+                      from('facturas_series_folios')->
+                      where("serie = '".$serie."' AND id_empresa = ".$empresa)->
+                      limit(1)->get()->row();
 
 		if(is_object($res)){
 			if($folio < $res->folio_inicio)
@@ -154,7 +137,7 @@ class facturacion_model extends privilegios_model{
    * Obtiene el folio de acuerdo a la serie seleccionada
    */
   public function get_series_empresa($ide){
-    $query = $this->db->select('id_serie_folio, id_empresa, serie')->
+    $query = $this->db->select('id_serie_folio, id_empresa, serie, leyenda')->
                       from('facturas_series_folios')->
                       where("id_empresa = ".$ide."")->
                       order_by('serie', 'ASC')->get();
@@ -391,9 +374,9 @@ class facturacion_model extends privilegios_model{
 // 		if($this->input->get('fserie')!='')
 // 			$this->db->where('serie',$this->input->get('fserie'));
 
-		$query = BDUtil::pagination("SELECT fsf.id_serie_folio, fsf.id_empresa, fsf.serie, fsf.no_aprobacion, fsf.folio_inicio, 
-					fsf.folio_fin, fsf.imagen, fsf.leyenda, fsf.leyenda1, fsf.leyenda2, fsf.ano_aprobacion, e.nombre_fiscal AS empresa 
-				FROM facturas_series_folios AS fsf 
+		$query = BDUtil::pagination("SELECT fsf.id_serie_folio, fsf.id_empresa, fsf.serie, fsf.no_aprobacion, fsf.folio_inicio,
+					fsf.folio_fin, fsf.imagen, fsf.leyenda, fsf.leyenda1, fsf.leyenda2, fsf.ano_aprobacion, e.nombre_fiscal AS empresa
+				FROM facturas_series_folios AS fsf
 					INNER JOIN empresas AS e ON e.id_empresa = fsf.id_empresa
 				WHERE lower(serie) LIKE '".mb_strtolower($this->input->get('fserie'), 'UTF-8')."' ".$sql."
 				ORDER BY fsf.serie", $params, true);
@@ -419,7 +402,7 @@ class facturacion_model extends privilegios_model{
 	public function getInfoSerieFolio($id_serie_folio = ''){
 		$id_serie_folio = ($id_serie_folio != '') ? $id_serie_folio : $this->input->get('id');
 
-		$res = $this->db->select('fsf.id_serie_folio, fsf.id_empresa, fsf.serie, fsf.no_aprobacion, fsf.folio_inicio, 
+		$res = $this->db->select('fsf.id_serie_folio, fsf.id_empresa, fsf.serie, fsf.no_aprobacion, fsf.folio_inicio,
 				fsf.folio_fin, fsf.imagen, fsf.leyenda, fsf.leyenda1, fsf.leyenda2, fsf.ano_aprobacion, e.nombre_fiscal AS empresa')
 			->from('facturas_series_folios AS fsf')
 				->join('empresas AS e', 'e.id_empresa = fsf.id_empresa', 'inner')
@@ -575,9 +558,9 @@ class facturacion_model extends privilegios_model{
       $pdf->AliasNbPages();
       // $links = array('', '', '', '');
       $pdf->SetY(30);
-      $aligns = array('C', 'C', 'C', 'C','C', 'C', 'C', 'C', 'C');
-      $widths = array(20, 25, 13, 51, 30, 35, 30, 30, 18);
-      $header = array('Fecha', 'Serie', 'Folio', 'Cliente', 'Empresa', 'Forma de pago', 'Estado');
+      $aligns = array('C', 'C', 'C', 'C','C', 'C', 'C', 'C');
+      $widths = array(20, 25, 13, 51, 30, 25, 18, 22);
+      $header = array('Fecha', 'Serie', 'Folio', 'Cliente', 'Empresa', 'Forma de pago', 'Estado', 'Total');
       $total = 0;
 
       foreach($data['fact'] as $key => $item)
@@ -600,7 +583,8 @@ class facturacion_model extends privilegios_model{
         $pdf->SetTextColor(0,0,0);
 
         $estado = ($item->status === 'p') ? 'Pendiente' : (($item->status === 'pa') ? 'Pagada' : 'Cancelada');
-        $datos = array($item->fecha, $item->serie, $item->folio, $item->nombre_fiscal, $item->empresa, $item->forma_pago, $estado);
+        $condicion_pago = ($item->condicion_pago === 'co') ? 'Contado' : 'Credito';
+        $datos = array($item->fecha, $item->serie, $item->folio, $item->nombre_fiscal, $item->empresa, $condicion_pago, $estado, String::formatoNumero($item->total));
         $total += floatval($item->total);
 
         $pdf->SetX(6);
@@ -612,7 +596,7 @@ class facturacion_model extends privilegios_model{
       $pdf->SetX(6);
       $pdf->SetFont('Arial','B',8);
       $pdf->SetTextColor(255,255,255);
-      $pdf->Row(array('Total:', String::formatoNumero($total)), true);
+      $pdf->Row(array('', '', '', '', '', '', 'Total:', String::formatoNumero($total)), true);
 
       $pdf->Output('Reporte_Ventas_Cliente.pdf', 'I');
   }
@@ -625,7 +609,7 @@ class facturacion_model extends privilegios_model{
       // Creación del objeto de la clase heredada
       $pdf = new MYpdf('P', 'mm', 'Letter');
       $pdf->show_head = true;
-      $pdf->titulo2 = 'Reporte Ventas Cliente';
+      $pdf->titulo2 = 'Reporte Ventas Productos';
 
       if (!empty($_GET['ffecha1']) && !empty($_GET['ffecha2']))
         $pdf->titulo3 = "Del ".$_GET['ffecha1']." al ".$_GET['ffecha2']."";
@@ -671,5 +655,6 @@ class facturacion_model extends privilegios_model{
 
       $pdf->Output('Reporte_Ventas_Productos.pdf', 'I');
   }
+
 
 }
