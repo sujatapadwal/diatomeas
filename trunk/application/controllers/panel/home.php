@@ -9,7 +9,7 @@ class home extends MY_Controller {
 	private $excepcion_privilegio = array('');
 
 	public function _remap($method){
-		
+
 		$this->load->model("empleados_model");
 		if($this->empleados_model->checkSession()){
 			$this->empleados_model->excepcion_privilegio = $this->excepcion_privilegio;
@@ -22,22 +22,28 @@ class home extends MY_Controller {
 
 	public function index(){
 
+    $this->carabiner->js(array(
+      array('general/msgbox.js'),
+    ));
+
 		$params['info_empleado'] = $this->info_empleado['info']; //info empleado
 		$params['seo'] = array(
 			'titulo' => 'Panel de Administración'
 		);
 
 		$calcWeek = date('W', strtotime(''))-1;
-		$params['venta_semana'] = $this->db->query("SELECT Count(*) AS num, IFNULL(Sum(total), 0) AS total 
-			FROM facturas WHERE status <> 'ca' 
-				AND fecha BETWEEN '".date('Y-m-d', strtotime('Monday ' . ($calcWeek-1) . ' weeks'))."' 
+		$params['venta_semana'] = $this->db->query("SELECT Count(*) AS num, IFNULL(Sum(total), 0) AS total
+			FROM facturas WHERE status <> 'ca'
+				AND fecha BETWEEN '".date('Y-m-d', strtotime('Monday ' . ($calcWeek-1) . ' weeks'))."'
 				AND '".date('Y-m-d', strtotime('Sunday ' . $calcWeek . ' weeks'))."'")->row();
 
-		$params['venta_mes'] = $this->db->query("SELECT Count(*) AS num, IFNULL(Sum(total), 0) AS total 
-			FROM facturas WHERE status <> 'ca' 
-				AND fecha BETWEEN '".date('Y-m')."-01' 
+		$params['venta_mes'] = $this->db->query("SELECT Count(*) AS num, IFNULL(Sum(total), 0) AS total
+			FROM facturas WHERE status <> 'ca'
+				AND fecha BETWEEN '".date('Y-m')."-01'
 				AND '".date('Y-m').'-'.String::ultimoDia(date('Y'), date('m'))."'")->row();
 
+    $this->load->model('facturacion_model');
+    $params['facturas_pendientes'] = $this->facturacion_model->getFacturas(20, " AND f.status = 'p'");
 
 		$this->load->view('panel/header', $params);
 		$this->load->view('panel/general/menu', $params);
