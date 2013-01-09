@@ -28,11 +28,20 @@
 								<label for="fnombre">Nombre</label>
 								<input type="text" name="fnombre" id="fnombre" value="<?php echo set_value_get('fnombre'); ?>" class="input-medium search-query" autofocus>
 
-								<input type="submit" name="enviar" value="Enviar" class="btn">
+                <label for="fmunicipio">Municipio</label>
+                <input type="text" name="fmunicipio" id="fmunicipio" value="<?php echo set_value_get('fmunicipio'); ?>" class="input-medium search-query">
+
+                <label for="festado">Estado</label>
+                <input type="text" name="festado" id="festado" value="<?php echo set_value_get('festado'); ?>" class="input-medium search-query">
+
+                <label for="fcalle">Calle</label>
+                <input type="text" name="fcalle" id="fcalle" value="<?php echo set_value_get('fcalle'); ?>" class="input-medium search-query">
+
+								<button type="submit" class="btn">Buscar</button>
 							</div>
 						</form>
 
-						<?php 
+						<?php
 						echo $this->empleados_model->getLinkPrivSm('clientes/agregar/', array(
 										'params'   => '',
 										'btn_type' => 'btn-success pull-right',
@@ -59,7 +68,7 @@
 									<td><?php echo $cliente->recepcion_facturas; ?></td>
 									<td><?php echo $cliente->dias_pago; ?></td>
 									<td class="center">
-											<?php 
+											<?php
 											echo $this->empleados_model->getLinkPrivSm('clientes/modificar/', array(
 													'params'   => 'id='.$cliente->id_cliente,
 													'btn_type' => 'btn-success')
@@ -69,7 +78,7 @@
 													'btn_type' => 'btn-danger',
 													'attrs' => array('onclick' => "msb.confirm('Estas seguro de eliminar?', 'Clientes', this); return false;"))
 											);
-											
+
 											?>
 									</td>
 								</tr>

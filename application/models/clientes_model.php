@@ -22,6 +22,12 @@ class clientes_model extends CI_Model{
 		//Filtros para buscar
 		if($this->input->get('fnombre') != '')
 			$sql = " AND lower(nombre_fiscal) LIKE '%".mb_strtolower($this->input->get('fnombre'), 'UTF-8')."%'";
+    if($this->input->get('fmunicipio') != '')
+      $sql = " AND lower(municipio) LIKE '%".mb_strtolower($this->input->get('fmunicipio'), 'UTF-8')."%'";
+    if($this->input->get('festado') != '')
+      $sql = " AND lower(estado) LIKE '%".mb_strtolower($this->input->get('festado'), 'UTF-8')."%'";
+    if($this->input->get('fcalle') != '')
+      $sql = " AND lower(calle) LIKE '%".mb_strtolower($this->input->get('fcalle'), 'UTF-8')."%'";
 
 // 		if($this->input->get('fstatus') != 'todos'){
 // 			$_GET['fstatus'] = $this->input->get('fstatus')==''? 'ac': $this->input->get('fstatus');

@@ -54,10 +54,6 @@ class facturacion extends MY_Controller {
    * Agrega una factura a la bd
    */
   public function agregar(){
-    $this->carabiner->css(array(
-        array('bootstrap/jquery-ui-1.9.2.custom.min.css', 'screen')
-
-    ));
     $this->carabiner->js(array(
         array('libs/jquery.numeric.js'),
         array('general/util.js'),
@@ -79,14 +75,15 @@ class facturacion extends MY_Controller {
       $params['frm_errors'] = $this->showMsgs(2, preg_replace("[\n|\r|\n\r]", '', validation_errors()));
     }else{
       $respons = $this->facturacion_model->addFactura();
-
-      if($respons[0]){
-        redirect(base_url('panel/facturacion/agregar/?msg=4'));
-      }
+      if($respons[0])
+        redirect(base_url('panel/facturacion/agregar/?msg=4&id='.$respons[2]));
     }
 
     $params['series'] = $this->facturacion_model->getSeriesFolios(100);
     $params['fecha']  = date("Y-m-d");
+
+    if (isset($_GET['id']))
+      $params['id'] = $_GET['id'];
 
     if(isset($_GET['msg']{0}))
       $params['frm_errors'] = $this->showMsgs($_GET['msg']);
@@ -276,7 +273,7 @@ class facturacion extends MY_Controller {
       $pdf->AddPage();
 
       $pdf->Image(APPPATH.'images/factura.jpg', .5, 0, 215, 279);
-      $pdf->Image(APPPATH.'images/empresas/'.$data_empresa->logo, 11, 9, 40, 25); // Logo de la Empresa
+      $pdf->Image($data_empresa->logo, 11, 9, 40, 25); // Logo de la Empresa
 
       $y = 40;
 
@@ -383,9 +380,6 @@ class facturacion extends MY_Controller {
       $widths = array(14, 18, 113, 24, 27);
       $header = array('', '', '', '', '');
 
-      // echo "<pre>";
-      //   var_dump($data['productos']);exit;
-      // echo "</pre>";
       foreach($data['productos'] as $key => $item)
       {
         $band_head = false;
@@ -397,7 +391,7 @@ class facturacion extends MY_Controller {
         $pdf->SetFont('Arial','',8);
         $pdf->SetTextColor(0,0,0);
 
-        $datos = array($item->cantidad, $item->unidad, $item->descripcion,
+        $datos = array($item->cantidad, ($item->unidad !== NULL ? $item->unidad : $item->unidad2), $item->descripcion,
                       String::formatoNumero($item->precio_unitario),
                       String::formatoNumero($item->importe));
 
@@ -531,7 +525,7 @@ class facturacion extends MY_Controller {
 
       $res = $this->db->select('Count(id_factura) AS num')
         ->from('facturas')
-        ->where("serie = '".$this->input->post('dserie')."' AND folio = ".$str."".$sql)
+        ->where("serie = '".$this->input->post('dserie')."' AND folio = ".$str." AND id_empresa = ". $this->input->post('did_empresa'))
       ->get();
       $data = $res->row();
       if($data->num > 0){

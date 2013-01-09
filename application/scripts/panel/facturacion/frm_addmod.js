@@ -87,6 +87,16 @@ $(function(){
       calculaTotal();
   });
 
+  $('.prod').on('keydown', function(event) {
+    if (event.which === 13) {
+      $('#addProducto').click();
+    }
+  });
+
+  $("form :input").on("keypress", function(e) {
+      return e.keyCode != 13;
+  });
+
 });
 
 function addProducto() {
@@ -173,6 +183,9 @@ function loadSerieFolio (ide) {
               html_option += '<option value="'+res.data[i].serie+'">'+res.data[i].serie+' - '+res.data[i].leyenda+'</option>';
             }
             objselect.html(html_option);
+
+            $("#dfolio").val("");
+            $("#dno_aprobacion").val("");
           } else {
             noty({"text":res.msg, "layout":"topRight", "type":res.ico});
           }
@@ -217,11 +230,6 @@ function reAutocomplete () {
       $("#dmedida").val(ui.item.item.nombre_unidad);
       $("#ddescuento").val(0);
       $("#ddescripcion").css("background-color", "#B0FFB0");
-    }
-  }).on("keydown", function(event){
-    if(event.which == 8 || event == 46){
-      limpiar();
-      $("#ddescripcion").val("").css("background-color", "#FFD9B3");
     }
   });
 }

@@ -1,6 +1,6 @@
 		<div id="content" class="span10">
 			<!-- content starts -->
-			
+
 
 			<div>
 				<ul class="breadcrumb">
@@ -37,7 +37,7 @@
 									</div>
 
 									<div class="control-group">
-									  <label class="control-label" for="femail">*E-mail </label>
+									  <label class="control-label" for="femail">*Usuario </label>
 									  <div class="controls">
 											<input type="text" name="femail" id="femail" class="span6" value="<?php echo set_value('femail'); ?>" maxlength="70" placeholder="correo@gmail.com">
 									  </div>
@@ -53,7 +53,7 @@
 									<div class="control-group tipo3">
 									  <label class="control-label" for="ftipo">*Tipo de Usuario </label>
 									  <div class="controls">
-											<select name="ftipo" id="ftipo">	
+											<select name="ftipo" id="ftipo">
 												<option value="admin" <?php echo set_select('ftipo', 'admin', false, $this->input->post('ftipo')); ?>>ADMINISTRADOR</option>
 												<option value="usuario" <?php echo set_select('ftipo', 'usuario', false, $this->input->post('ftipo')); ?>>USUARIO</option>
 											</select>
@@ -66,10 +66,10 @@
 	                  <label class="control-label" style="width: 100px;">Privilegios </label>
 	                  <div class="controls" style="margin-left: 120px;">
 	                  	<div id="list_privilegios" style="height: 300px; overflow-y: auto; border:1px #ddd solid;">
-	                  		<?php 
+	                  		<?php
 													if($this->empleados_model->tienePrivilegioDe('', 'privilegios/index/')){
 														echo $this->empleados_model->getFrmPrivilegios(0, true);
-													} 
+													}
 												?>
 	                    </div>
 	                  </div>
@@ -77,20 +77,20 @@
 	              </div> <!--/span-->
 
 	              <div class="clearfix"></div>
-								
+
 								<div class="form-actions">
 								  <button type="submit" class="btn btn-primary">Guardar</button>
 								  <button type="reset" class="btn">Cancelar</button>
 								</div>
 						  </fieldset>
-						</form>   
+						</form>
 
 					</div>
 				</div><!--/span-->
 
 			</div><!--/row-->
-				  
-       
+
+
 					<!-- content ends -->
 		</div><!--/#content.span10-->
 
@@ -98,7 +98,7 @@
 
 <!-- Bloque de alertas -->
 <?php if(isset($frm_errors)){
-	if($frm_errors['msg'] != ''){ 
+	if($frm_errors['msg'] != ''){
 ?>
 <script type="text/javascript" charset="UTF-8">
 	$(document).ready(function(){

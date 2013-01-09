@@ -1,5 +1,5 @@
 <div class="span10">
-  <form class="form-horizontal" action="<?php echo base_url('panel/facturacion/agregar'); ?>" method="POST">
+  <form class="form-horizontal" action="<?php echo base_url('panel/facturacion/agregar'); ?>" method="POST" id="form">
 
     <div class="row">
       <div class="span6">
@@ -123,7 +123,7 @@
         <div class="control-group">
           <div class="controls">
             <div class="well span9">
-                <button type="submit" class="btn btn-success btn-large btn-block" style="width:100%;">Guardar Factura</button>
+                <button type="submit" class="btn btn-success btn-large btn-block" style="width:100%;" id="submit">Guardar Factura</button>
             </div>
           </div>
         </div>
@@ -135,21 +135,21 @@
       <div class="span12">
         <legend>Productos</legend>
         <div class="span6">
-          <div class="input-prepend input-append" style="width:100%;"><span class="add-on">Descripción</span><input class="" name="ddescripcion" id="ddescripcion" type="text" style="width:80%;"></div>
+          <div class="input-prepend input-append" style="width:100%;"><span class="add-on">Descripción</span><input class="prod" name="ddescripcion" id="ddescripcion" type="text" style="width:80%;"></div>
           <input type="hidden" value="" id="did_prod">
         </div>
         <div class="span5">
-          <div class="input-prepend input-append"><span class="add-on">Precio U.</span><input class="input-mini vpositive" name="dpreciou" id="dpreciou" type="text"></div>
-          <div class="input-prepend input-append"><span class="add-on">Cant.</span><input class="input-mini vpos-int" name="dcantidad" id="dcantidad" type="number"></div>
-          <div class="input-prepend input-append"><span class="add-on">IVA</span><select name="diva" id="diva" class="input-mini">
+          <div class="input-prepend input-append"><span class="add-on">Precio U.</span><input class="input-mini vpositive prod" name="dpreciou" id="dpreciou" type="text"></div>
+          <div class="input-prepend input-append"><span class="add-on">Cant.</span><input class="input-mini vpos-int prod" name="dcantidad" id="dcantidad" type="number"></div>
+          <div class="input-prepend input-append"><span class="add-on">IVA</span><select name="diva" id="diva" class="input-mini prod">
             <option value="0" <?php echo set_select('diva', '0'); ?>>0%</option>
             <option value="11" <?php echo set_select('diva', '.11'); ?>>11%</option>
             <option value="16" <?php echo set_select('diva', '.16'); ?>>16%</option>
           </select></div>
 
-          <div class="input-prepend input-append" style="margin-top:10px;"><span class="add-on">Medida</span><input class="input-mini" name="dmedida" id="dmedida" type="text"></div>
-          <div class="input-prepend input-append"><span class="add-on">Desc %</span><input class="input-mini vpos-int" name="ddescuento" value="0" id="ddescuento" type="number" min="0" max="100"></div>
-          <div class="input-prepend input-append"><span class="add-on">Retención</span><select name="dreten_iva" id="dreten_iva" class="input-small">
+          <div class="input-prepend input-append" style="margin-top:10px;"><span class="add-on">Medida</span><input class="input-mini prod" name="dmedida" id="dmedida" type="text"></div>
+          <div class="input-prepend input-append"><span class="add-on">Desc %</span><input class="input-mini vpos-int prod" name="ddescuento" value="0" id="ddescuento" type="number" min="0" max="100"></div>
+          <div class="input-prepend input-append"><span class="add-on">Retención</span><select name="dreten_iva" id="dreten_iva" class="input-small prod">
               <option value="0" <?php echo set_select('dreten_iva', '0'); ?>>No retener</option>
               <option value="0.04" <?php echo set_select('dreten_iva', '0.04'); ?>>4%</option>
               <option value="0.6666" <?php echo set_select('dreten_iva', '0.6666'); ?>>2 Terceras</option>
@@ -265,6 +265,11 @@
   if($frm_errors['msg'] != ''){
 ?>
 <script type="text/javascript" charset="UTF-8">
+
+  <?php if($frm_errors['ico'] === 'success') {
+    echo 'window.open("'.base_url('panel/facturacion/imprimir/?id='.$id).'")';
+  }?>
+
   $(document).ready(function(){
     noty({"text":"<?php echo $frm_errors['msg']; ?>", "layout":"topRight", "type":"<?php echo $frm_errors['ico']; ?>"});
   });
