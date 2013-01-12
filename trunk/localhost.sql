@@ -216,6 +216,7 @@ CREATE TABLE IF NOT EXISTS `facturas_productos` (
   `total` double NOT NULL,
   `descuento` float NOT NULL DEFAULT '0' COMMENT 'Es el % del descuento',
   `retencion` float NOT NULL DEFAULT '0' COMMENT 'Es el % de la retencion',
+  `unidad` varchar(20) NOT NULL,
   PRIMARY KEY (`id_fac_prod`),
   KEY `id_factura` (`id_factura`),
   KEY `id_producto` (`id_producto`)
