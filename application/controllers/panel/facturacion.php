@@ -273,7 +273,8 @@ class facturacion extends MY_Controller {
       $pdf->AddPage();
 
       $pdf->Image(APPPATH.'images/factura.jpg', .5, 0, 215, 279);
-      $pdf->Image($data_empresa->logo, 11, 9, 40, 25); // Logo de la Empresa
+      if ($data_empresa->logo != '')
+        $pdf->Image($data_empresa->logo, 11, 12, 40, 0); // Logo de la Empresa
 
       $y = 40;
 
@@ -365,18 +366,24 @@ class facturacion extends MY_Controller {
       $pdf->SetXY(158, 58);
       $pdf->Cell(48, 6, ($data['info']->condicion_pago=='cr'? 'CREDITO': 'CONTADO'), 0, 0, 'C');
 
-      $pdf->SetXY(28, 38);
-      $pdf->Cell(128, 6, $data['info']->cliente->nombre_fiscal, 0, 0, 'L');
+      $pdf->SetAligns(array('L'));
+      $pdf->SetWidths(array(128));
+
+      $pdf->SetXY(28, 36);
+      // $pdf->Cell(128, 6, $data['info']->cliente->nombre_fiscal, 0, 0, 'L');
+      $pdf->Row(array($data['info']->cliente->nombre_fiscal), false, false);
       $pdf->SetFont('Arial','', 9);
-      $pdf->SetXY(28, 45);
-      $pdf->Cell(128, 6, $data['info']->domicilio, 0, 0, 'L');
+      $pdf->SetXY(28, 43);
+      // $pdf->Cell(128, 6, $data['info']->domicilio, 0, 0, 'L');
+      $pdf->Row(array($data['info']->domicilio), false, false);
+
       $pdf->SetXY(28, 52);
       $pdf->Cell(128, 6, $data['info']->ciudad, 0, 1, 'L');
       $pdf->SetXY(28, 58);
       $pdf->Cell(128, 6, strtoupper($data['info']->cliente->rfc), 0, 1, 'L');
 
       $pdf->SetY(70);
-      $aligns = array('C', 'C', 'C', 'C', 'C');
+      $aligns = array('C', 'C', 'L', 'C', 'C');
       $widths = array(14, 18, 113, 24, 27);
       $header = array('', '', '', '', '');
 
@@ -500,6 +507,9 @@ class facturacion extends MY_Controller {
       $pdf->SetFont('Arial','', 10);
       $pdf->SetXY(50, 249);
       $pdf->Cell(155, 6, $data_empresa->regimen_fiscal, 0, 0, 'L');
+
+      $pdf->SetXY(10, 252);
+      $pdf->Cell(155, 6, "SICOFI ".$data_serie->no_aprobacion, 0, 0, 'L');
 
       // $pdf->SetXY(170, 258);
       // $pdf->SetFont('Arial','B', 12);
