@@ -349,7 +349,149 @@ class facturacion_model extends privilegios_model{
 		// $data_f = $this->getDataFactura($id_factura,true);
 		// $this->cfd->generaArchivos($data_f);
 		
+		$this->enviarFactura($id_factura);
+
 		return array(true,'id_factura'=>$id_factura);
+	}
+
+	/**
+	* !!!!!!!!! CUIDADO 
+	* El servidor local es uno
+	* y el remoto otro
+	*/
+	public function enviarFactura($id){
+
+		$res_fac = $this->db->select("*")->from('facturacion')->where('id_factura',$id)->get()->row();
+		$res_empresa = $this->db->select("*")->from('empresas')->where('id_empresa', $res_fac->id_empresa)->get()->row();
+		$res_cliente = $this->db->select("*")->from('clientes')->where('id_cliente', $res_fac->id_cliente)->get()->row();
+
+		if($res_cliente->email != ''){
+			include(APPPATH."libraries/php_mailer/class.phpmailer.php");
+
+			$tipo_factu = $res_fac->serie=='NC'? 'Nota de Credito': 'Factura';
+			$asunto = 'Ha recibido una COMPROBANTE FISCAL de '.$res_empresa->nombre_fiscal;
+
+			if ($res_fac->status != "ca") {
+				$msg_alt = 'Estimado Cliente: '.$res_cliente->nombre_fiscal.'. Usted está recibiendo un comprobante fiscal ('.$tipo_factu.' '.$res_fac->serie.'-'.$res_fac->folio.') de '.$res_empresa->nombre_fiscal;
+				$msg_html = '
+				<p>Estimado Cliente: <strong>'.$res_cliente->nombre_fiscal.'</strong></p>
+				<p>Usted está recibiendo un comprobante fiscal digital ('.$tipo_factu.' '.$res_fac->serie.'-'.$res_fac->folio.') de '.$res_empresa->nombre_fiscal.'</p>
+				';
+			}else{
+				$msg_alt = 'HEMOS CANCELADO EL COMPROBANTE FISCAL '.$tipo_factu.' '.$res_fac->serie.'-'.$res_fac->folio.', HA QUEDADO SIN EFECTOS FISCALES PARA SU EMPRESA, POR LO QUE PEDIMOS ELIMINARLO Y NO INCLUIRLO EN SU CONTABILIDAD, YA QUE PUEDE REPRESENTAR UN PROBLEMA FISCAL PARA USTED O SU EMPRESA CUANDO EL SAT REALICE UNA FUTURA AUDITORIA EN SU CONTABILIDAD.';
+				$msg_html = '
+				<p>Estimado Cliente: <strong>'.$res_cliente->nombre_fiscal.'</strong></p>
+				<p>HEMOS CANCELADO EL COMPROBANTE FISCAL DIGITAL '.$tipo_factu.' '.$res_fac->serie.'-'.$res_fac->folio.', HA QUEDADO SIN EFECTOS FISCALES PARA SU EMPRESA, POR LO QUE PEDIMOS ELIMINARLO Y NO INCLUIRLO EN SU CONTABILIDAD, YA QUE PUEDE REPRESENTAR UN PROBLEMA FISCAL PARA USTED O SU EMPRESA CUANDO EL SAT REALICE UNA FUTURA AUDITORIA EN SU CONTABILIDAD.</p>
+				';
+			}
+
+			$msg_html .= '
+				<p>Si usted desea que llegue el comprobante fiscal a otro correo electronico notifiquelo a: <br>
+					'.$res_empresa->email.'</p>
+				<p>Si por algun motivo, decea optener nuevamente su factura puede descargarla directamente de nuestra pagina en la seccion Facturación.<br>
+				';
+
+			date_default_timezone_set('America/Mexico_City'); //Se define la zona horaria
+			#require_once('class.phpmailer.php'); //Incluimos la clase phpmailer
+
+			$mail = new PHPMailer(true); // Declaramos un nuevo correo, el parametro true significa que mostrara excepciones y errores.
+
+			$mail->IsSMTP(); // Se especifica a la clase que se utilizará SMTP
+
+			try {
+				//------------------------------------------------------
+				$correo_emisor_em = 'fumigacionesaereasnevarez@gmail.com';
+				$correo_emisor="fumigacionesaereasnevarez@gmail.com";     //Correo a utilizar para autenticarse
+				                     //Gmail o de GoogleApps
+				$nombre_emisor="Fumigaciones Aereas Nevarez";               //Nombre de quien envía el correo
+				$contrasena="n3v4r3zr";          //contraseña de tu cuenta en Gmail
+				$correo_destino=$res_cliente->email;      //Correo de quien recibe
+				$nombre_destino= $res_cliente->nombre_fiscal;               //Nombre de quien recibe
+				//--------------------------------------------------------
+				$mail->SMTPDebug  = 0;                     // Habilita información SMTP (opcional para pruebas)
+				                                         // 1 = errores y mensajes
+				                                         // 2 = solo mensajes
+				$mail->SMTPAuth   = true;                  // Habilita la autenticación SMTP
+				$mail->SMTPSecure = "ssl";                 // Establece el tipo de seguridad SMTP
+				$mail->Host       = "smtp.gmail.com";      // Establece Gmail como el servidor SMTP
+				$mail->Port       = 465;                   // Establece el puerto del servidor SMTP de Gmail
+				$mail->Username   = $correo_emisor;         // Usuario Gmail
+				$mail->Password   = $contrasena;           // Contraseña Gmail
+				//A que dirección se puede responder el correo
+				$mail->AddReplyTo($correo_emisor_em, $nombre_emisor);
+
+				//La direccion a donde mandamos el correo
+				$mail->AddAddress($correo_destino, $nombre_destino);
+				// $mail->AddAddress("chonitabananas@hotmail.com", $nombre_destino);
+				//De parte de quien es el correo
+				$mail->SetFrom($correo_emisor_em, $nombre_emisor);
+				//Asunto del correo
+				$mail->Subject = $asunto;
+				//Mensaje alternativo en caso que el destinatario no pueda abrir correos HTML
+				$mail->AltBody = $msg_alt;
+				//El cuerpo del mensaje, puede ser con etiquetas HTML
+				$mail->MsgHTML($msg_html);
+				//Archivos adjuntos
+				
+				// $this->load->model('facturacion_model');
+        $data = $this->getDataFactura($id);
+        $this->load->library('cfd');
+        $archivo = $this->cfd->generarPDFQR($data,array('s'));
+				// $archivo = file_get_contents(URLB.'index.php?idioma=es&opc=facturacion&method=descargarPDF&id='.$id.'&view=1&adm=1');
+				$nombre_archivo1 = APPPATH.'/media/'.$res_empresa->rfc.$res_fac->serie.'-'.$res_fac->folio.".pdf";
+				file_put_contents($nombre_archivo1, $archivo);
+
+				// $archivo = file_get_contents(URLB.'index.php?idioma=es&opc=facturacion&method=descargarXML&id='.$id.'&view=1&adm=1');
+				// $nombre_archivo2 = RPATH.'/media/'.$data_config[0]['rfc'].$data[0]['serie'].$this->acomodarFolio($data[0]['folio']).".xml";
+				// file_put_contents($nombre_archivo2, $archivo);
+				
+				$mail->AddAttachment($nombre_archivo1);      // Archivos Adjuntos
+				// $mail->AddAttachment($nombre_archivo2);      // Archivos Adjuntos
+				//Enviamos el correo
+				$mail->Send();
+
+				unlink($nombre_archivo1);
+				// unlink($nombre_archivo2);
+			} catch (phpmailerException $e) {
+				$e->errorMessage(); //Errores de PhpMailer
+			} catch (Exception $e) {
+				$e->getMessage(); //Errores de cualquier otra cosa.
+			}
+		
+
+			/*//Servidor internet
+			$correo_emisor_em = 'facturas@chonitabananas.com';
+			$nombre_emisor="Chonita Bananas";               //Nombre de quien envía el correo
+
+			$axml = $this->descargarXML(false);	//xml
+
+			$archivo = $this->descargarPDF(true);
+			$archivo = chunk_split(base64_encode($archivo));
+
+			$uid = md5(uniqid(time()));
+	    $header = "From: CHONITA BANANAS S.P.R. DE R.L. <".$correo_emisor_em.">\r\n";
+	    $header .= "Reply-To: ".$correo_emisor_em."\r\n";
+	    $header .= "MIME-Version: 1.0\r\n";
+	    $header .= "Content-Type: multipart/mixed; boundary=\"".$uid."\"\r\n\r\n";
+	    $header .= "This is a multi-part message in MIME format.\r\n";
+	    $header .= "--".$uid."\r\n";
+	    $header .= "Content-Type: text/html; charset=UTF-8\r\n";
+	    $header .= "Content-Transfer-Encoding: 8bit\r\n";
+	    $header .= $msg_html."\r\n\r\n";
+	    $header .= "--".$uid."\r\n";
+	    $header .= "Content-Type: application/pdf; name=\"".$axml[0].".pdf\"\r\n"; // use different content types here
+	    $header .= "Content-Transfer-Encoding: base64\r\n";
+	    $header .= "Content-Disposition: attachment; filename=\"".$axml[0].".pdf\"\r\n\r\n";
+	    $header .= $archivo."\r\n\r\n";
+	    $header .= "--".$uid."\r\n";
+	    $header .= "Content-Type: text/xml; name=\"".$axml[0].".xml\"\r\n"; // use different content types here
+	    $header .= "Content-Transfer-Encoding: base64\r\n";
+	    $header .= "Content-Disposition: attachment; filename=\"".$axml[0].".xml\"\r\n\r\n";
+	    $header .= chunk_split(base64_encode($axml[1]))."\r\n\r\n";
+	    $header .= "--".$uid."--";
+			mail($data[0]['email'], $asunto, $msg_html, $header);*/
+		}
+		// $this->misFacturas();
 	}
 	
 	public function cancelFactura($id_factura=''){
