@@ -412,7 +412,7 @@ class facturacion extends MY_Controller {
                                 'rules'         => 'required'),
                 array('field'   => 'dserie',
                                 'label'         => 'Serie',
-                                'rules'         => 'required|max_length[30]'),
+                                'rules'         => 'max_length[30]'),
                 array('field'   => 'dimg_cbb',
                                 'label'         => 'Codigo QR',
                                 'rules'         => 'required|max_length[100]'),
@@ -481,8 +481,9 @@ class facturacion extends MY_Controller {
         {                       
             $this->load->model('facturacion_model');
             $params = $this->facturacion_model->addFactura();
-            if($params[0])
+            if($params[0]){
                 $params['msg'] = $this->showMsgs(4);
+            }
         }
         echo json_encode($params);
     }

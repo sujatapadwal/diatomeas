@@ -763,7 +763,7 @@ class cfd{
 			$pdf->SetTextColor(255,0,0);
 			$pdf->SetFillColor(255,255,255);
 			$pdf->SetXY(158, $y+12);
-			$pdf->Cell(50, 8, $data['serie'].'-'.$data['folio'] , 0, 0, 'C');
+			$pdf->Cell(50, 8, ($data['serie']!=''? $data['serie'].'-': '').$data['folio'] , 0, 0, 'C');
 			
 			// ----------- FECHA ------------------
 			
@@ -1098,8 +1098,8 @@ class cfd{
 			if(count($accion)>0){
 				foreach($accion as $a){
 					switch (strtolower($a)){
-						case 'v': // VISUALIZA PDF EN WEB
-							$pdf->Output($dir_anio.'|'.$dir_mes.'|'.$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.pdf', 'I');
+						case 's': // VISUALIZA PDF EN WEB
+							return $pdf->Output($dir_anio.'|'.$dir_mes.'|'.$this->rfc.'-'.$data['serie'].'-'.$this->acomodarFolio($data['folio']).'.pdf', 'S');
 						break;
 						case 'f': // GUARDA EN DIRECTORIO facturasPDF
 							$path_guardar = APPPATH.'media/cfd/facturasPDF/'.$dir_anio.'/'.$dir_mes.'/'.
