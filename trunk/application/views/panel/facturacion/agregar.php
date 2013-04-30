@@ -140,7 +140,7 @@
         </div>
         <div class="span5">
           <div class="input-prepend input-append"><span class="add-on">Precio U.</span><input class="input-mini vpositive prod" name="dpreciou" id="dpreciou" type="text"></div>
-          <div class="input-prepend input-append"><span class="add-on">Cant.</span><input class="input-mini vpos-int prod" name="dcantidad" id="dcantidad" type="number"></div>
+          <div class="input-prepend input-append"><span class="add-on">Cant.</span><input class="input-mini vpositive prod" name="dcantidad" id="dcantidad" type="number"></div>
           <div class="input-prepend input-append"><span class="add-on">IVA</span><select name="diva" id="diva" class="input-mini prod">
             <option value="0" <?php echo set_select('diva', '0'); ?>>0%</option>
             <option value="11" <?php echo set_select('diva', '.11'); ?>>11%</option>
