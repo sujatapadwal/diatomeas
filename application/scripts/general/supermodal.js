@@ -38,7 +38,7 @@ var supermodal = (function($){
 	function createBox(){
 		if (objmodal == undefined) {
 			var html = '<div id="supermodal" class="modal hide fade">'+
-			  '<div class="modal-body" style="max-height:550px;">'+
+			  '<div class="modal-body" style="height: 93%;max-height:550px;">'+
 			  '</div>'+
 			'</div>';
 			$("body").append(html);
